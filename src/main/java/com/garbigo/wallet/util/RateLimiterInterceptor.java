@@ -1,4 +1,4 @@
-package com.premisave.wallet.util;
+package com.garbigo.wallet.util;
 
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.http.HttpServletRequest;

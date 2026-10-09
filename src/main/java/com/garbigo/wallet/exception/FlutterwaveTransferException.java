@@ -1,4 +1,4 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
 /**
  * Thrown when a Flutterwave Transfer (disbursement) request blows up before

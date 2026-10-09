@@ -1,17 +1,17 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.InternalPaymentRequest;
-import com.premisave.wallet.dto.PaymentInitiateRequest;
-import com.premisave.wallet.dto.PaymentRecordResponse;
-import com.premisave.wallet.dto.PaymentResponse;
-import com.premisave.wallet.entity.Payment;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.enums.PaymentStatus;
-import com.premisave.wallet.exception.WalletNotFoundException;
-import com.premisave.wallet.repository.PaymentRepository;
-import com.premisave.wallet.repository.WalletRepository;
-import com.premisave.wallet.util.DateRangeCriteriaUtil;
+import com.garbigo.wallet.dto.InternalPaymentRequest;
+import com.garbigo.wallet.dto.PaymentInitiateRequest;
+import com.garbigo.wallet.dto.PaymentRecordResponse;
+import com.garbigo.wallet.dto.PaymentResponse;
+import com.garbigo.wallet.entity.Payment;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.enums.PaymentStatus;
+import com.garbigo.wallet.exception.WalletNotFoundException;
+import com.garbigo.wallet.repository.PaymentRepository;
+import com.garbigo.wallet.repository.WalletRepository;
+import com.garbigo.wallet.util.DateRangeCriteriaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -46,7 +46,7 @@ import java.util.UUID;
  * Two public entry points, one shared implementation:
  *  - deductFromWallet() — user-initiated, via POST /payments/deduct,
  *    payer resolved from their own JWT.
- *  - payInternal() — another Premisave service calling via
+ *  - payInternal() — another garbigo service calling via
  *    POST /internal/payment. Requires an explicit userId in the request
  *    body, since InternalApiKeyFilter authenticates the CALLING SERVICE,
  *    not an end user.

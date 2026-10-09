@@ -1,19 +1,19 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.DisbursementRequest;
-import com.premisave.wallet.dto.DisbursementRecordResponse;
-import com.premisave.wallet.dto.DisbursementResponse;
-import com.premisave.wallet.entity.Disbursement;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.enums.DisbursementStatus;
-import com.premisave.wallet.exception.InsufficientFundsException;
-import com.premisave.wallet.exception.ResourceNotFoundException;
-import com.premisave.wallet.exception.WalletFrozenException;
-import com.premisave.wallet.exception.WalletNotFoundException;
-import com.premisave.wallet.repository.DisbursementRepository;
-import com.premisave.wallet.repository.WalletRepository;
-import com.premisave.wallet.util.DateRangeCriteriaUtil;
+import com.garbigo.wallet.dto.DisbursementRequest;
+import com.garbigo.wallet.dto.DisbursementRecordResponse;
+import com.garbigo.wallet.dto.DisbursementResponse;
+import com.garbigo.wallet.entity.Disbursement;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.enums.DisbursementStatus;
+import com.garbigo.wallet.exception.InsufficientFundsException;
+import com.garbigo.wallet.exception.ResourceNotFoundException;
+import com.garbigo.wallet.exception.WalletFrozenException;
+import com.garbigo.wallet.exception.WalletNotFoundException;
+import com.garbigo.wallet.repository.DisbursementRepository;
+import com.garbigo.wallet.repository.WalletRepository;
+import com.garbigo.wallet.util.DateRangeCriteriaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -316,7 +316,7 @@ public class DisbursementService {
     // sites don't need to change — delegates straight to MpesaDisbursementService.
 
     public DisbursementResponse processB2PochiPayment(String initiatedByUserId,
-                                                        com.premisave.wallet.dto.B2PochiRequest request) {
+                                                        com.garbigo.wallet.dto.B2PochiRequest request) {
         return mpesaDisbursementService.processB2PochiPayment(initiatedByUserId, request);
     }
 
@@ -326,7 +326,7 @@ public class DisbursementService {
     // to change.
 
     public DisbursementResponse processB2BPayment(String initiatedByUserId,
-                                                    com.premisave.wallet.dto.MpesaB2BRequest request) {
+                                                    com.garbigo.wallet.dto.MpesaB2BRequest request) {
         return mpesaDisbursementService.processB2BPayment(initiatedByUserId, request);
     }
 
@@ -388,9 +388,9 @@ public class DisbursementService {
      *    automatic completeXDisbursement already uses.
      *  - walletId absent: a company-initiated disbursement (B2B, likely
      *    B2C Account Top Up too) — money moving directly out of
-     *    Premisave's OWN M-Pesa shortcode, never a customer wallet in the
+     *    garbigo's OWN M-Pesa shortcode, never a customer wallet in the
      *    first place. Confirmed from a real record: userId was
-     *    "admin@premisave.com", no walletId anywhere. Approving this
+     *    "admin@garbigo.com", no walletId anywhere. Approving this
      *    records a NEGATIVE CompanyLedgerEntry (a real loss/expense, per
      *    that entity's own signed-amount convention) via
      *    CommissionService.recordCommission — reused for its actual

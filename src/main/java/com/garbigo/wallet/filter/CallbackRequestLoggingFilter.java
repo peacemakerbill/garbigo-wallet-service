@@ -1,4 +1,4 @@
-package com.premisave.wallet.filter;
+package com.garbigo.wallet.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

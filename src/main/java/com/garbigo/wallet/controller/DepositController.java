@@ -1,9 +1,9 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.DepositRecordResponse;
-import com.premisave.wallet.enums.DepositStatus;
-import com.premisave.wallet.service.DepositService;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.DepositRecordResponse;
+import com.garbigo.wallet.enums.DepositStatus;
+import com.garbigo.wallet.service.DepositService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

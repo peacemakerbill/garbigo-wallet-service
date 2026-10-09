@@ -1,9 +1,9 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.GatewayBalanceSnapshotResponse;
-import com.premisave.wallet.dto.ProviderBalanceResponse;
-import com.premisave.wallet.service.ProviderBalanceService;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.GatewayBalanceSnapshotResponse;
+import com.garbigo.wallet.dto.ProviderBalanceResponse;
+import com.garbigo.wallet.service.ProviderBalanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;

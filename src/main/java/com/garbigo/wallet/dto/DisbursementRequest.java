@@ -1,4 +1,4 @@
-package com.premisave.wallet.dto;
+package com.garbigo.wallet.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

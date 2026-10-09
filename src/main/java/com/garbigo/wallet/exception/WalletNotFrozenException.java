@@ -1,4 +1,4 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
 /**
  * Thrown when attempting to unfreeze a wallet that isn't currently

@@ -1,20 +1,20 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
-import com.premisave.wallet.config.MpesaConfig;
-import com.premisave.wallet.dto.B2PochiRequest;
-import com.premisave.wallet.dto.MpesaAsyncResponse;
-import com.premisave.wallet.dto.MpesaB2BRequest;
-import com.premisave.wallet.dto.MpesaB2BResponse;
-import com.premisave.wallet.dto.MpesaB2CResponse;
-import com.premisave.wallet.dto.MpesaReversalRequest;
-import com.premisave.wallet.dto.MpesaStkPushRequest;
-import com.premisave.wallet.dto.PullTransactionRecord;
-import com.premisave.wallet.dto.PullTransactionResponse;
-import com.premisave.wallet.dto.QueryOrgInfoRequest;
-import com.premisave.wallet.dto.QueryOrgInfoResponse;
-import com.premisave.wallet.dto.TransactionStatusRequest;
+import com.garbigo.wallet.config.MpesaConfig;
+import com.garbigo.wallet.dto.B2PochiRequest;
+import com.garbigo.wallet.dto.MpesaAsyncResponse;
+import com.garbigo.wallet.dto.MpesaB2BRequest;
+import com.garbigo.wallet.dto.MpesaB2BResponse;
+import com.garbigo.wallet.dto.MpesaB2CResponse;
+import com.garbigo.wallet.dto.MpesaReversalRequest;
+import com.garbigo.wallet.dto.MpesaStkPushRequest;
+import com.garbigo.wallet.dto.PullTransactionRecord;
+import com.garbigo.wallet.dto.PullTransactionResponse;
+import com.garbigo.wallet.dto.QueryOrgInfoRequest;
+import com.garbigo.wallet.dto.QueryOrgInfoResponse;
+import com.garbigo.wallet.dto.TransactionStatusRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -77,7 +77,7 @@ public class MpesaService {
         body.put("PhoneNumber",       phone);
         body.put("CallBackURL",       config.getCallbackUrl());
         body.put("AccountReference",  req.getAccountReference());
-        body.put("TransactionDesc",   "Premisave Wallet Deposit");
+        body.put("TransactionDesc",   "garbigo Wallet Deposit");
 
         try {
             String respBody = post(config.baseUrl() + "/mpesa/stkpush/v1/processrequest", token, body);
@@ -138,7 +138,7 @@ public class MpesaService {
         body.put("Amount",              amount.intValue());
         body.put("PartyA",              b2c.getShortcode() != null ? b2c.getShortcode() : config.getShortcode());
         body.put("PartyB",              phone254);
-        body.put("Remarks",             "Premisave Disbursement");
+        body.put("Remarks",             "garbigo Disbursement");
         body.put("QueueTimeOutURL",     b2c.getQueueTimeoutUrl());
         body.put("ResultURL",           b2c.getResultUrl());
         body.put("Occassion",           "Wallet Cashout");
@@ -192,7 +192,7 @@ public class MpesaService {
         body.put("PartyA",                 b2b.getShortcode());
         body.put("PartyB",                 req.getReceiverShortcode());
         body.put("AccountReference",       req.getAccountReference());
-        body.put("Remarks",                req.getRemarks() != null ? req.getRemarks() : "Premisave B2B payment");
+        body.put("Remarks",                req.getRemarks() != null ? req.getRemarks() : "garbigo B2B payment");
         body.put("QueueTimeOutURL",        b2b.getQueueTimeoutUrl());
         body.put("ResultURL",              b2b.getResultUrl());
 
@@ -239,7 +239,7 @@ public class MpesaService {
         body.put("CommandID", "AccountBalance");
         body.put("PartyA", cfg.getPartyA() != null ? cfg.getPartyA() : config.getShortcode());
         body.put("IdentifierType", cfg.getIdentifierType());
-        body.put("Remarks", "Premisave balance inquiry");
+        body.put("Remarks", "garbigo balance inquiry");
         body.put("QueueTimeOutURL", cfg.getQueueTimeoutUrl());
         body.put("ResultURL", cfg.getResultUrl());
 
@@ -354,7 +354,7 @@ public class MpesaService {
         body.put("Amount", req.getAmount().intValue());
         body.put("PartyA", cfg.getPartyA() != null ? cfg.getPartyA() : config.getShortcode());
         body.put("PartyB", phone254);
-        body.put("Remarks", req.getRemarks() != null ? req.getRemarks() : "Premisave Pochi disbursement");
+        body.put("Remarks", req.getRemarks() != null ? req.getRemarks() : "garbigo Pochi disbursement");
         body.put("QueueTimeOutURL", cfg.getQueueTimeoutUrl());
         body.put("ResultURL", cfg.getResultUrl());
         body.put("Occassion", req.getOccasion() != null ? req.getOccasion() : "");

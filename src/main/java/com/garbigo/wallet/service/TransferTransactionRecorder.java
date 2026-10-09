@@ -1,12 +1,12 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.entity.Transaction;
-import com.premisave.wallet.entity.Transfer;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.enums.TransactionStatus;
-import com.premisave.wallet.enums.TransactionType;
-import com.premisave.wallet.repository.TransactionRepository;
+import com.garbigo.wallet.entity.Transaction;
+import com.garbigo.wallet.entity.Transfer;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.enums.TransactionStatus;
+import com.garbigo.wallet.enums.TransactionType;
+import com.garbigo.wallet.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

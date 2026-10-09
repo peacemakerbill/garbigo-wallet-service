@@ -1,4 +1,4 @@
-package com.premisave.wallet.enums;
+package com.garbigo.wallet.enums;
 
 /** Direction of a manual admin balance adjustment. */
 public enum ManualAdjustmentType {

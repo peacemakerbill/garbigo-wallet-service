@@ -1,4 +1,4 @@
-package com.premisave.wallet.enums;
+package com.garbigo.wallet.enums;
 
 /**
  * Payment lifecycle status — mirrors DepositStatus/DisbursementStatus/

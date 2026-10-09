@@ -1,18 +1,18 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.InternalTransferRequest;
-import com.premisave.wallet.dto.PaymentResponse;
-import com.premisave.wallet.dto.TransferRecordResponse;
-import com.premisave.wallet.dto.TransferRequest;
-import com.premisave.wallet.entity.Transfer;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.enums.TransferStatus;
-import com.premisave.wallet.exception.WalletFrozenException;
-import com.premisave.wallet.exception.WalletNotFoundException;
-import com.premisave.wallet.repository.TransferRepository;
-import com.premisave.wallet.repository.WalletRepository;
-import com.premisave.wallet.util.DateRangeCriteriaUtil;
+import com.garbigo.wallet.dto.InternalTransferRequest;
+import com.garbigo.wallet.dto.PaymentResponse;
+import com.garbigo.wallet.dto.TransferRecordResponse;
+import com.garbigo.wallet.dto.TransferRequest;
+import com.garbigo.wallet.entity.Transfer;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.enums.TransferStatus;
+import com.garbigo.wallet.exception.WalletFrozenException;
+import com.garbigo.wallet.exception.WalletNotFoundException;
+import com.garbigo.wallet.repository.TransferRepository;
+import com.garbigo.wallet.repository.WalletRepository;
+import com.garbigo.wallet.util.DateRangeCriteriaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,7 +47,7 @@ import java.util.UUID;
  *
  * Two public entry points, one shared implementation:
  *  - transfer() — user-initiated, sender resolved from their own JWT.
- *  - transferInternal() — another Premisave service calling via
+ *  - transferInternal() — another garbigo service calling via
  *    POST /internal/transfer. Requires an explicit senderUserId in the
  *    request body, since InternalApiKeyFilter authenticates the CALLING
  *    SERVICE, not an end user.

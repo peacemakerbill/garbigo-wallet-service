@@ -1,18 +1,18 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.*;
-import com.premisave.wallet.entity.Transaction;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.exception.DuplicateMpesaPhoneNumberException;
-import com.premisave.wallet.exception.InsufficientFundsException;
-import com.premisave.wallet.exception.WalletAlreadyExistsException;
-import com.premisave.wallet.exception.WalletAlreadyFrozenException;
-import com.premisave.wallet.exception.WalletFrozenException;
-import com.premisave.wallet.exception.WalletNotFoundException;
-import com.premisave.wallet.exception.WalletNotFrozenException;
-import com.premisave.wallet.repository.TransactionRepository;
-import com.premisave.wallet.repository.WalletRepository;
+import com.garbigo.wallet.dto.*;
+import com.garbigo.wallet.entity.Transaction;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.exception.DuplicateMpesaPhoneNumberException;
+import com.garbigo.wallet.exception.InsufficientFundsException;
+import com.garbigo.wallet.exception.WalletAlreadyExistsException;
+import com.garbigo.wallet.exception.WalletAlreadyFrozenException;
+import com.garbigo.wallet.exception.WalletFrozenException;
+import com.garbigo.wallet.exception.WalletNotFoundException;
+import com.garbigo.wallet.exception.WalletNotFrozenException;
+import com.garbigo.wallet.repository.TransactionRepository;
+import com.garbigo.wallet.repository.WalletRepository;
 import com.stripe.model.BankAccount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class WalletService {
 
     /**
      * GET /internal/accounts — the wallet-owner directory another
-     * Premisave service can page through, resolving name/phone/payment-
+     * garbigo service can page through, resolving name/phone/payment-
      * method details in one call rather than needing its own separate
      * lookups against auth-service for everything except the name.
      *
@@ -399,7 +399,7 @@ public class WalletService {
      *
      * This does NOT revoke the vault token on PayPal's side — PayPal
      * doesn't expose a safe customer-scoped "delete this vault_id" call via
-     * server API. It only stops Premisave from storing/reusing it. Distinct
+     * server API. It only stops garbigo from storing/reusing it. Distinct
      * from paypalEmail (the manual payout destination set via
      * updatePaypalEmail above) — that's left untouched here.
      */
@@ -442,8 +442,8 @@ public class WalletService {
      * disconnectPaypalAccount above, this doesn't (and can't) revoke
      * anything on Stripe's side either — Express connected accounts don't
      * support an OAuth-style deauthorize the way Standard accounts do,
-     * since Premisave created and operationally controls this account, not
-     * the user. This only stops Premisave from sending future transfers/
+     * since garbigo created and operationally controls this account, not
+     * the user. This only stops garbigo from sending future transfers/
      * payouts to it; the underlying Stripe Account object is left
      * untouched, and a future re-link creates a brand-new connected
      * account rather than reusing the forgotten one.

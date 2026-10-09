@@ -1,4 +1,4 @@
-package com.premisave.wallet.enums;
+package com.garbigo.wallet.enums;
 
 /**
  * Flutterwave v4 charge/transaction status values.

@@ -1,14 +1,14 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.DepositRequest;
-import com.premisave.wallet.dto.PaymentResponse;
-import com.premisave.wallet.entity.Deposit;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.enums.DepositStatus;
-import com.premisave.wallet.exception.WalletNotFoundException;
-import com.premisave.wallet.repository.DepositRepository;
-import com.premisave.wallet.repository.WalletRepository;
+import com.garbigo.wallet.dto.DepositRequest;
+import com.garbigo.wallet.dto.PaymentResponse;
+import com.garbigo.wallet.entity.Deposit;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.enums.DepositStatus;
+import com.garbigo.wallet.exception.WalletNotFoundException;
+import com.garbigo.wallet.repository.DepositRepository;
+import com.garbigo.wallet.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -116,7 +116,7 @@ public class NowPaymentsDepositService {
         }
 
         NowPaymentsService.CreatePaymentResult result = nowPaymentsService.createPayment(
-                request.getAmount(), priceCurrency, payCurrency, idempotencyKey, "Premisave wallet deposit",
+                request.getAmount(), priceCurrency, payCurrency, idempotencyKey, "garbigo wallet deposit",
                 request.getNowPaymentsSandboxCase());
 
         if (!result.success()) {

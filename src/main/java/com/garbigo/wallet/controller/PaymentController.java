@@ -1,11 +1,11 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.PaymentInitiateRequest;
-import com.premisave.wallet.dto.PaymentRecordResponse;
-import com.premisave.wallet.dto.PaymentResponse;
-import com.premisave.wallet.enums.PaymentStatus;
-import com.premisave.wallet.service.PaymentService;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.PaymentInitiateRequest;
+import com.garbigo.wallet.dto.PaymentRecordResponse;
+import com.garbigo.wallet.dto.PaymentResponse;
+import com.garbigo.wallet.enums.PaymentStatus;
+import com.garbigo.wallet.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

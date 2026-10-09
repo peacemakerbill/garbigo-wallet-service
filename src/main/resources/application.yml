@@ -1,0 +1,306 @@
+spring:
+  application:
+    name: premisave-wallet-service
+
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://localhost:27017/premisave-wallet}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      repositories:
+        enabled: false
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  cloud:
+    discovery:
+      enabled: false
+
+server:
+  port: 8084
+
+# Auth Service Integration
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://localhost:8080}
+    # api-key removed from here entirely — AuthServiceFeignConfig (or
+    # whichever class calls auth-service) must now read internal.api-key
+    # directly instead of auth.service.api-key. One shared key across every
+    # microservice, with no separate property path aliasing it.
+
+# Shared secret internal services present via X-API-Key when calling
+# wallet-service's /internal/** endpoints (see InternalApiKeyFilter), AND
+# also used by wallet-service itself when it calls OUT to auth-service —
+# ONE key, reused everywhere, read directly from here rather than through
+# a separate auth.service.api-key alias.
+# Must match property-service's app.api-key (INTERNAL_API_KEY env var) --
+# every service reads the same INTERNAL_API_KEY name, but from its own
+# separate .env file, so the actual value must be copied identically to
+# all of them.
+internal:
+  api-key: ${INTERNAL_API_KEY}
+
+# JWT Configuration (must match other services)
+jwt:
+  secret: ${JWT_SECRET:eW91ci12ZXJ5LXNlY3VyZS1qd3Qtc2VjcmV0LWtleS0zMi1ieXRlcyE=}
+
+# Rate Limiting
+rate-limit:
+  requests-per-minute: 60
+
+# ─── M-Pesa Daraja ────────────────────────────────────────────────────────────
+mpesa:
+  daraja:
+    consumer-key: ${MPESA_CONSUMER_KEY}
+    consumer-secret: ${MPESA_CONSUMER_SECRET}
+    shortcode: ${MPESA_SHORTCODE}
+    passkey: ${MPESA_PASSKEY}
+    # STK push callback — must be HTTPS and publicly reachable (use ngrok locally)
+    callback-url: ${MPESA_CALLBACK_URL}
+    environment: ${MPESA_ENV:sandbox}
+#   Safaricom Test Phone Numbers
+#       254705912645
+#       254708374149
+
+    # Safaricom's public certificate, used to RSA-encrypt initiator passwords
+    # into a SecurityCredential for B2C/B2B (see MpesaSecurityCredentialService).
+    # Bundled at src/main/resources/certs/ — resolved via classpath, so no
+    # scheme prefix needed. Sandbox and production certs are DIFFERENT files;
+    # set MPESA_CERT_PATH=certs/ProductionCertificate.cer in production.
+    certificate-path: ${MPESA_CERT_PATH:certs/SandboxCertificate.cer}
+
+    # ── B2C (Business to Customer — disbursements/payouts to a phone number) ──
+    b2c:
+      initiator-name: ${MPESA_B2C_INITIATOR_NAME}
+      # Plaintext initiator password — encrypted at runtime via certificate-path,
+      # never sent to Safaricom in this form. Set MPESA_B2C_INITIATOR_PASSWORD in production.
+      initiator-password: ${MPESA_B2C_INITIATOR_PASSWORD}
+      shortcode: ${MPESA_B2C_SHORTCODE}
+      command-id: ${MPESA_B2C_COMMAND_ID}   # SalaryPayment | BusinessPayment | PromotionPayment
+      queue-timeout-url: ${MPESA_B2C_TIMEOUT_URL}
+      result-url: ${MPESA_B2C_RESULT_URL}
+      # Confirm actual tier limits with Safaricom for your shortcode.
+      min-amount: 10
+      max-amount: 150000
+
+    # ── B2B (Business to Business) ──
+    # code with Safaricom (account manager / Daraja portal) before
+    # relying on this in production. commandId here defaults BusinessPayBill /
+    # BusinessBuyGoods / etc. calls that don't specify their own commandId.
+    b2b:
+      initiator-name: ${MPESA_B2B_INITIATOR_NAME}
+      initiator-password: ${MPESA_B2B_INITIATOR_PASSWORD}
+      shortcode: ${MPESA_B2B_SHORTCODE}
+      receiver-shortcode: ${MPESA_B2B_RECEIVER_SHORTCODE}
+      command-id: ${MPESA_B2B_COMMAND_ID:BusinessPayBill}   # BusinessPayBill | BusinessBuyGoods | MerchantToMerchantTransfer | ...
+      sender-identifier-type: ${MPESA_B2B_SENDER_IDENTIFIER_TYPE:4}
+      receiver-identifier-type: ${MPESA_B2B_RECEIVER_IDENTIFIER_TYPE:4}
+      queue-timeout-url: ${MPESA_B2B_TIMEOUT_URL}
+      result-url: ${MPESA_B2B_RESULT_URL}
+      min-amount: 10
+      max-amount: 150000
+
+    # ── C2B (Customer to Business — Register URL, Validation & Confirmation) ──
+    c2b:
+      shortcode: ${MPESA_C2B_SHORTCODE}
+      response-type: ${MPESA_C2B_RESPONSE_TYPE}   # Completed | Cancelled
+      validation-url: ${MPESA_C2B_VALIDATION_URL}
+      confirmation-url: ${MPESA_C2B_CONFIRMATION_URL}
+
+    # ── Transaction Status API ──
+    # Secondary reconciliation mechanism for C2B/B2B/B2C/Reversal transactions
+    # whose ResultURL callback never arrived. See MpesaOperationsService.
+    # https://developer.safaricom.co.ke/apis/TransactionStatus
+    transaction-status:
+      initiator-name: ${MPESA_STATUS_INITIATOR_NAME}
+      initiator-password: ${MPESA_STATUS_INITIATOR_PASSWORD}
+      party-a: ${MPESA_STATUS_PARTY_A}
+      identifier-type: ${MPESA_STATUS_IDENTIFIER_TYPE:4}   # 1=MSISDN, 2=Till, 4=Shortcode
+      queue-timeout-url: ${MPESA_STATUS_TIMEOUT_URL}
+      result-url: ${MPESA_STATUS_RESULT_URL}
+
+    # ── Account Balance API ──
+    # Real-time balance inquiry across Working (MMF), Utility, and Charges
+    # Paid accounts for our own shortcode. See MpesaOperationsService.
+    # https://developer.safaricom.co.ke/apis/AccountBalance
+    account-balance:
+      initiator-name: ${MPESA_BALANCE_INITIATOR_NAME}
+      initiator-password: ${MPESA_BALANCE_INITIATOR_PASSWORD}
+      party-a: ${MPESA_BALANCE_PARTY_A}
+      identifier-type: ${MPESA_BALANCE_IDENTIFIER_TYPE:4}
+      queue-timeout-url: ${MPESA_BALANCE_TIMEOUT_URL}
+      result-url: ${MPESA_BALANCE_RESULT_URL}
+
+    # ── Reversal API ──
+    # Reverses a completed C2B transaction (refunds the customer, debits our
+    # shortcode). B2C payouts cannot be reversed via API — portal only.
+    # https://developer.safaricom.co.ke/apis/Reversal
+    reversal:
+      initiator-name: ${MPESA_REVERSAL_INITIATOR_NAME}
+      initiator-password: ${MPESA_REVERSAL_INITIATOR_PASSWORD}
+      receiver-party: ${MPESA_REVERSAL_RECEIVER_PARTY}
+      receiver-identifier-type: ${MPESA_REVERSAL_RECEIVER_IDENTIFIER_TYPE:11}   # Must be 11 per Safaricom's spec
+      queue-timeout-url: ${MPESA_REVERSAL_TIMEOUT_URL}
+      result-url: ${MPESA_REVERSAL_RESULT_URL}
+
+    # ── B2Pochi (Business to Pochi la Biashara) ──
+    # Pays directly into a customer's Pochi business wallet instead of their
+    # main M-Pesa balance. Requires a B2C shortcode / "one account" capable
+    # of both receiving and disbursing.
+    # https://developer.safaricom.co.ke/apis/BusinessToPochi
+    b2-pochi:
+      initiator-name: ${MPESA_POCHI_INITIATOR_NAME}
+      initiator-password: ${MPESA_POCHI_INITIATOR_PASSWORD}
+      party-a: ${MPESA_POCHI_PARTY_A}
+      queue-timeout-url: ${MPESA_POCHI_TIMEOUT_URL}
+      result-url: ${MPESA_POCHI_RESULT_URL}
+      min-amount: 10
+      max-amount: 250000
+
+    # ── B2B Hakikisha (Query Org Info) ──
+    # No dedicated config block — see MpesaConfig.queryOrgInfoUrl(), derived from baseUrl().
+
+    # ── Pull Transactions API (C2B reconciliation) ──
+    pull-transactions:
+      shortcode: ${MPESA_PULL_SHORTCODE}
+      # The Safaricom MSISDN tied to this shortcode's KYC — found on the
+      # M-PESA portal, NOT something you choose arbitrarily.
+      nominated-number: ${MPESA_PULL_NOMINATED_NUMBER}
+      callback-url: ${MPESA_PULL_CALLBACK_URL}
+      # Default lookback window (days) when a query doesn't specify dates. Max 2 (48h retention).
+      pull-days: ${MPESA_PULL_DAYS}
+      offset-value: ${MPESA_PULL_OFFSET:0}
+
+# ─── Stripe ───────────────────────────────────────────────────────────────────
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY}
+  # Platform webhook — Dashboard → Webhooks → your endpoint → Signing secret.
+  # Covers deposits (payment_intent.succeeded) and saved cards (setup_intent.succeeded).
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+
+  # ── Stripe Connect (bank withdrawal linking — international users only) ──
+  # One-time manual setup required in the Dashboard before this works:
+  # Settings → Connect → Onboarding options → configure which countries
+  # Express accounts can onboard from (defaults to a narrow list otherwise).
+  connect:
+    # Where Stripe redirects the user if their onboarding link expired/was
+    # already used — your frontend should re-request a fresh link
+    # (POST /wallet/stripe/connect/link) and redirect again from there.
+    refresh-url: ${STRIPE_CONNECT_REFRESH_URL}
+    # Where Stripe redirects the user after finishing/exiting onboarding.
+    return-url: ${STRIPE_CONNECT_RETURN_URL}
+    # SEPARATE webhook endpoint from webhook-secret above — Dashboard →
+    # Webhooks → new destination → "Listen to events on Connected accounts".
+    # Covers account.updated, payout.paid, payout.failed.
+    webhook-secret: ${STRIPE_CONNECT_WEBHOOK_SECRET}
+
+# ─── PayPal ───────────────────────────────────────────────────────────────────
+paypal:
+  client-id: ${PAYPAL_CLIENT_ID}
+  client-secret: ${PAYPAL_CLIENT_SECRET}
+  environment: ${PAYPAL_ENV}   # "sandbox" or "production"
+  webhook-id: ${PAYPAL_WEBHOOK_ID}
+  return-url: ${PAYPAL_RETURN_URL}
+  cancel-url: ${PAYPAL_CANCEL_URL}
+
+# ─── Flutterwave ──────────────────────────────────────────────────────────────
+flutterwave:
+  client-id: ${FLUTTERWAVE_CLIENT_ID}
+  client-secret: ${FLUTTERWAVE_CLIENT_SECRET}
+  encryption-key: ${FLUTTERWAVE_ENCRYPTION_KEY}
+  environment: ${FLUTTERWAVE_ENV:sandbox}   # "sandbox" or "production" — now DOES determine the base URL, see FlutterwaveConfig
+  webhook-secret-hash: ${FLUTTERWAVE_WEBHOOK_SECRET_HASH}
+  redirect-url: ${FLUTTERWAVE_REDIRECT_URL}
+  # SANDBOX TESTING ONLY — see FlutterwaveConfig.sandboxScenarioKey javadoc.
+  # Leave unset in production.
+  sandbox-scenario-key: ${FLUTTERWAVE_SANDBOX_SCENARIO_KEY:}
+  transfer:
+    min-amount: 1
+    max-amount: 5000
+
+# ─── NOWPayments (crypto) ─────────────────────────────────────────────────────
+# No sandbox tunnel/CLI tooling exists like Stripe CLI's `stripe listen` —
+# callback-url below must be a real reachable HTTPS URL (zrok/ngrok in dev)
+# even while testing in sandbox. See NowPaymentsConfig for the full javadoc.
+nowpayments:
+  # https://api-sandbox.nowpayments.io for testing, https://api.nowpayments.io for production
+  base-url: ${NOWPAYMENTS_BASE_URL:https://api-sandbox.nowpayments.io}
+  # Dashboard → Settings → Payments → API keys
+  api-key: ${NOWPAYMENTS_API_KEY}
+  # Dashboard → Settings → Payments → Instant payment notifications.
+  # NOT interchangeable between sandbox/production — see NowPaymentsService.verifyIpnSignature.
+  ipn-secret: ${NOWPAYMENTS_IPN_SECRET}
+  # Sent as ipn_callback_url on every Create Payment request.
+  callback-url: ${NOWPAYMENTS_CALLBACK_URL}
+  # Your NOWPayments DASHBOARD LOGIN (not the API key above) — required only
+  # for payouts, via POST /v1/auth. See NowPaymentsConfig for why this is a
+  # meaningfully more sensitive secret than everything else in this block.
+  payout-email: ${NOWPAYMENTS_PAYOUT_EMAIL:}
+  payout-password: ${NOWPAYMENTS_PAYOUT_PASSWORD:}
+
+# ─── Commission rates ─────────────────────────────────────────────────────
+# See CommissionConfig for the full reasoning. Both are decimal fractions
+# (0.01 = 1%, not 1). Defaults below (1% internal / 3% gateway) are the
+# actual chosen rates, roughly in line with typical real-world payment
+# processing fees — not placeholders anymore.
+commission:
+  # Internal wallet-to-wallet transfers — expected lower than gateway-rate.
+  internal-transfer-rate: ${COMMISSION_INTERNAL_TRANSFER_RATE:0.01}
+  # Gateway-bound disbursements (M-Pesa B2C/B2Pochi, PayPal, Stripe, Flutterwave, NOWPayments).
+  gateway-rate: ${COMMISSION_GATEWAY_RATE:0.03}
+
+# Frontend URL for CORS
+frontend:
+  url: ${FRONTEND_URL:http://localhost:3000}
+
+# ─── Exchange Rate refresh ─────────────────────────────────────────────────
+# See ExchangeRateService — refreshIntervalMs is read directly by the
+# @Scheduled annotation itself via a property placeholder, not through
+# this properties class at annotation-processing time; both are kept in
+# sync with the same default (20 minutes) regardless.
+exchange-rate:
+  refresh-interval-ms: ${EXCHANGE_RATE_REFRESH_INTERVAL_MS:1200000}
+  max-retries: ${EXCHANGE_RATE_MAX_RETRIES:3}
+
+# ─── Notifications ─────────────────────────────────────────────────────────
+# See MpesaDisbursementService.notifyB2BRecipients — B2B never touches a
+# customer wallet, so there's no wallet owner's email to notify the way
+# B2C/B2Pochi have; this is who gets the success/failure email instead.
+# Comma-separated, no spaces required around commas (trimmed either way).
+# Empty/unset is safe — logs a warning and sends nothing, never throws.
+notifications:
+  b2b-recipients: ${B2B_NOTIFICATION_RECIPIENTS:}
+
+# ─── SpringDoc / Swagger UI ─────────────────────────────────────────────────
+# Disabled outright — SecurityConfig's permitAll() list still names these
+# paths, but with the endpoints themselves off there's nothing left at
+# them to expose either way. Also silences springdoc's own startup
+# warning about these being publicly reachable by default (springdoc
+# logs it unconditionally regardless of this property's value — a known,
+# still-open springdoc-openapi issue, not something this setting can
+# suppress on its own; disabling the endpoints for real is what removes it).
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    "[com.premisave]": DEBUG
+    "[org.springframework.data.mongodb]": WARN
+    "[org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport]": ERROR
+    "[org.springframework.cloud.commons.util.InetUtils]": ERROR

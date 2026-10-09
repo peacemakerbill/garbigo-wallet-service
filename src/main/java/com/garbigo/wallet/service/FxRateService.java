@@ -1,4 +1,4 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;

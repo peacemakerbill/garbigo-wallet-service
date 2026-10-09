@@ -1,12 +1,12 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.DisbursementRequest;
-import com.premisave.wallet.entity.Disbursement;
-import com.premisave.wallet.entity.Wallet;
-import com.premisave.wallet.enums.DisbursementStatus;
-import com.premisave.wallet.exception.WalletNotFoundException;
-import com.premisave.wallet.repository.DisbursementRepository;
-import com.premisave.wallet.repository.WalletRepository;
+import com.garbigo.wallet.dto.DisbursementRequest;
+import com.garbigo.wallet.entity.Disbursement;
+import com.garbigo.wallet.entity.Wallet;
+import com.garbigo.wallet.enums.DisbursementStatus;
+import com.garbigo.wallet.exception.WalletNotFoundException;
+import com.garbigo.wallet.repository.DisbursementRepository;
+import com.garbigo.wallet.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

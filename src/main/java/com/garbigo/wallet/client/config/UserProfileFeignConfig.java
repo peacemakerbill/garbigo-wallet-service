@@ -1,4 +1,4 @@
-package com.premisave.wallet.client.config;
+package com.garbigo.wallet.client.config;
 
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;

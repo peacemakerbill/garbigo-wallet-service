@@ -1,6 +1,6 @@
-package com.premisave.wallet.entity;
+package com.garbigo.wallet.entity;
 
-import com.premisave.wallet.enums.DisbursementStatus;
+import com.garbigo.wallet.enums.DisbursementStatus;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;

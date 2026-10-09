@@ -1,8 +1,8 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.security.InternalApiKeyFilter;
-import com.premisave.wallet.security.JwtAuthenticationFilter;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.security.InternalApiKeyFilter;
+import com.garbigo.wallet.security.JwtAuthenticationFilter;
 import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;

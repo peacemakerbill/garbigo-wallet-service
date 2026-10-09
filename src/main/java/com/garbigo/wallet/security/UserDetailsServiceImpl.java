@@ -1,4 +1,4 @@
-package com.premisave.wallet.security;
+package com.garbigo.wallet.security;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

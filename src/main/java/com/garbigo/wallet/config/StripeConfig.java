@@ -1,4 +1,4 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
 import com.stripe.StripeClient;
 import lombok.Data;

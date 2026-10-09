@@ -1,13 +1,13 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.AccountDetailsResponse;
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.InternalPaymentRequest;
-import com.premisave.wallet.dto.InternalTransferRequest;
-import com.premisave.wallet.dto.PaymentResponse;
-import com.premisave.wallet.service.PaymentService;
-import com.premisave.wallet.service.TransferService;
-import com.premisave.wallet.service.WalletService;
+import com.garbigo.wallet.dto.AccountDetailsResponse;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.InternalPaymentRequest;
+import com.garbigo.wallet.dto.InternalTransferRequest;
+import com.garbigo.wallet.dto.PaymentResponse;
+import com.garbigo.wallet.service.PaymentService;
+import com.garbigo.wallet.service.TransferService;
+import com.garbigo.wallet.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +44,7 @@ public class InternalController {
     private final WalletService walletService;
 
     /**
-     * The wallet-owner directory another Premisave service (e.g.
+     * The wallet-owner directory another garbigo service (e.g.
      * property-service) can page through — name, phone numbers
      * (M-Pesa/Pochi), PayPal email, and payment-method linkage status
      * for every account, without each caller needing its own separate
@@ -81,7 +81,7 @@ public class InternalController {
     }
 
     /**
-     * Triggers a wallet-to-wallet transfer on behalf of another Premisave
+     * Triggers a wallet-to-wallet transfer on behalf of another garbigo
      * service. Same underlying logic as POST /wallet/transfer — see
      * TransferService.executeTransfer — just with an explicit sender
      * instead of one resolved from a JWT.
@@ -95,7 +95,7 @@ public class InternalController {
 
     /**
      * Triggers a wallet-to-platform payment on behalf of another
-     * Premisave service — e.g. property-service deducting a booking fee
+     * garbigo service — e.g. property-service deducting a booking fee
      * or ad-subscription charge from a user's wallet. Same underlying
      * logic as POST /payments/deduct — see PaymentService.executePayment
      * — just with an explicit payer instead of one resolved from a JWT.

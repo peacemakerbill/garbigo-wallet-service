@@ -1,9 +1,9 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
-import com.premisave.wallet.config.FlutterwaveConfig;
-import com.premisave.wallet.exception.FlutterwaveTransferException;
+import com.garbigo.wallet.config.FlutterwaveConfig;
+import com.garbigo.wallet.exception.FlutterwaveTransferException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
@@ -388,7 +388,7 @@ public class FlutterwaveService {
             body.put("action", "instant");
             body.put("type", "mobile_money");
             body.put("reference", reference);
-            body.put("narration", narration != null ? narration : "Premisave wallet disbursement");
+            body.put("narration", narration != null ? narration : "garbigo wallet disbursement");
             body.put("payment_instruction", paymentInstruction);
 
             String responseBody = post("/direct-transfers", body, reference);
@@ -492,7 +492,7 @@ public class FlutterwaveService {
             body.put("action", "instant");
             body.put("type", "bank");
             body.put("reference", reference);
-            body.put("narration", narration != null ? narration : "Premisave wallet disbursement");
+            body.put("narration", narration != null ? narration : "garbigo wallet disbursement");
             body.put("payment_instruction", paymentInstruction);
 
             String responseBody = post("/direct-transfers", body, reference);
@@ -552,7 +552,7 @@ public class FlutterwaveService {
      * Links a Flutterwave account to the wallet.
      * Caller must save the wallet after calling this.
      */
-    public void linkFlutterwaveAccount(com.premisave.wallet.entity.Wallet wallet, String customerId,
+    public void linkFlutterwaveAccount(com.garbigo.wallet.entity.Wallet wallet, String customerId,
                                         String paymentMethodId, String network, String phone) {
         wallet.setFlutterwaveCustomerId(customerId);
         wallet.setFlutterwavePaymentMethodId(paymentMethodId);
@@ -566,7 +566,7 @@ public class FlutterwaveService {
      * Unlinks a Flutterwave account from the wallet.
      * Caller must save the wallet after calling this.
      */
-    public void unlinkAccount(com.premisave.wallet.entity.Wallet wallet) {
+    public void unlinkAccount(com.garbigo.wallet.entity.Wallet wallet) {
         wallet.setFlutterwaveCustomerId(null);
         wallet.setFlutterwavePaymentMethodId(null);
         wallet.setFlutterwavePaymentMethodNetwork(null);
@@ -581,7 +581,7 @@ public class FlutterwaveService {
     public record BalanceResult(boolean success, List<CurrencyBalanceEntry> balances, String message) {}
 
     /**
-     * Premisave's OWN Flutterwave balance, across every currency wallet.
+     * garbigo's OWN Flutterwave balance, across every currency wallet.
      *
      * GET /wallets/balances — CONFIRMED against Flutterwave's own official
      * OpenAPI spec (developer.flutterwave.com/reference/fetch_wallet_balances.md),

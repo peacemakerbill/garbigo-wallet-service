@@ -1,4 +1,4 @@
-package com.premisave.wallet.enums;
+package com.garbigo.wallet.enums;
 
 /**
  * Must stay in sync with com.premisave.auth.enums.Role in the auth service.

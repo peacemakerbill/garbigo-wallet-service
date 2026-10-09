@@ -1,4 +1,4 @@
-package com.premisave.wallet.enums;
+package com.garbigo.wallet.enums;
 
 /**
  * Distinguishes the "operational" M-Pesa async flows (account balance,

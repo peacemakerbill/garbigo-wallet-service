@@ -1,8 +1,8 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.GatewayBalanceSnapshotResponse;
-import com.premisave.wallet.dto.ProviderBalanceResponse;
-import com.premisave.wallet.entity.GatewayBalanceSnapshot;
+import com.garbigo.wallet.dto.GatewayBalanceSnapshotResponse;
+import com.garbigo.wallet.dto.ProviderBalanceResponse;
+import com.garbigo.wallet.entity.GatewayBalanceSnapshot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Orchestrates "what's Premisave's own balance with each payment
+ * Orchestrates "what's garbigo's own balance with each payment
  * gateway" across all five providers — the same provider-specific-
  * service + thin-orchestrator pattern used throughout tonight for
  * deposits/disbursements, applied here instead. No new API-integration
@@ -100,7 +100,7 @@ public class ProviderBalanceService {
         response.setFetchedAt(LocalDateTime.now());
         response.setBalances(List.of());
         try {
-            com.premisave.wallet.dto.MpesaAsyncResponse submission = mpesaOperationsService.queryAccountBalance(checkedBy);
+            com.garbigo.wallet.dto.MpesaAsyncResponse submission = mpesaOperationsService.queryAccountBalance(checkedBy);
             response.setConversationId(submission.getConversationId());
             response.setOriginatorConversationId(submission.getOriginatorConversationId());
 

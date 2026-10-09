@@ -1,7 +1,7 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.client.UserProfileClient;
-import com.premisave.wallet.dto.ApiResponse;
+import com.garbigo.wallet.client.UserProfileClient;
+import com.garbigo.wallet.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
-import com.premisave.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -261,9 +261,9 @@ public class GlobalExceptionHandler {
      * its own 409 with the actual actionable message instead of falling
      * through to handleGeneric's bare 500 "An unexpected error occurred".
      */
-    @ExceptionHandler(com.premisave.wallet.exception.C2BUrlsAlreadyRegisteredException.class)
+    @ExceptionHandler(com.garbigo.wallet.exception.C2BUrlsAlreadyRegisteredException.class)
     public ResponseEntity<ApiResponse<Void>> handleC2BUrlsAlreadyRegistered(
-            com.premisave.wallet.exception.C2BUrlsAlreadyRegisteredException ex) {
+            com.garbigo.wallet.exception.C2BUrlsAlreadyRegisteredException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiResponse.error(ex.getMessage()));
     }

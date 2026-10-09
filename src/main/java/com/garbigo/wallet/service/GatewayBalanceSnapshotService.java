@@ -1,9 +1,9 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.dto.GatewayBalanceSnapshotResponse;
-import com.premisave.wallet.dto.ProviderBalanceResponse;
-import com.premisave.wallet.entity.GatewayBalanceSnapshot;
-import com.premisave.wallet.repository.GatewayBalanceSnapshotRepository;
+import com.garbigo.wallet.dto.GatewayBalanceSnapshotResponse;
+import com.garbigo.wallet.dto.ProviderBalanceResponse;
+import com.garbigo.wallet.entity.GatewayBalanceSnapshot;
+import com.garbigo.wallet.repository.GatewayBalanceSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

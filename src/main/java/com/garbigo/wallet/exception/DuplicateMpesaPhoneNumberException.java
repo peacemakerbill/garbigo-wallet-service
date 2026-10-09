@@ -1,4 +1,4 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
 /**
  * Thrown when a user tries to set their wallet's mpesaPhoneNumber to a

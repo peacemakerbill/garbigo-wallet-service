@@ -1,4 +1,4 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;

@@ -1,6 +1,6 @@
-package com.premisave.wallet.dto;
+package com.garbigo.wallet.dto;
 
-import com.premisave.wallet.enums.DisbursementStatus;
+import com.garbigo.wallet.enums.DisbursementStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;

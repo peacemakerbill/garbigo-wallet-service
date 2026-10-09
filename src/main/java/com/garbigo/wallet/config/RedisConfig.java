@@ -1,4 +1,4 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

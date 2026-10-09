@@ -1,8 +1,8 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.TransactionResponse;
-import com.premisave.wallet.service.TransactionService;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.TransactionResponse;
+import com.garbigo.wallet.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

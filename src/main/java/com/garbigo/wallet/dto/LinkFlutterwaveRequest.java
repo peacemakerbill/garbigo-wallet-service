@@ -1,4 +1,4 @@
-package com.premisave.wallet.dto;
+package com.garbigo.wallet.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

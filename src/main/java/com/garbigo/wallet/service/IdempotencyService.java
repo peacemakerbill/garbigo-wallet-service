@@ -1,8 +1,8 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.exception.DuplicateTransactionException;
-import com.premisave.wallet.repository.DisbursementRepository;
-import com.premisave.wallet.repository.TransactionRepository;
+import com.garbigo.wallet.exception.DuplicateTransactionException;
+import com.garbigo.wallet.repository.DisbursementRepository;
+import com.garbigo.wallet.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

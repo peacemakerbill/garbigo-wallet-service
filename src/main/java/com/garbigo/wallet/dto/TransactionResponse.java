@@ -1,7 +1,7 @@
-package com.premisave.wallet.dto;
+package com.garbigo.wallet.dto;
 
-import com.premisave.wallet.enums.TransactionStatus;
-import com.premisave.wallet.enums.TransactionType;
+import com.garbigo.wallet.enums.TransactionStatus;
+import com.garbigo.wallet.enums.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

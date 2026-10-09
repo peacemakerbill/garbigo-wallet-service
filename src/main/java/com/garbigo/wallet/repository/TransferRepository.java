@@ -1,6 +1,6 @@
-package com.premisave.wallet.repository;
+package com.garbigo.wallet.repository;
 
-import com.premisave.wallet.entity.Transfer;
+import com.garbigo.wallet.entity.Transfer;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.premisave.wallet.repository;
+package com.garbigo.wallet.repository;
 
-import com.premisave.wallet.entity.SavedCard;
+import com.garbigo.wallet.entity.SavedCard;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

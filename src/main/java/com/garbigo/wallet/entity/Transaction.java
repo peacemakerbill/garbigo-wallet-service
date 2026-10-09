@@ -1,8 +1,8 @@
-package com.premisave.wallet.entity;
+package com.garbigo.wallet.entity;
 
-import com.premisave.wallet.enums.Currency;
-import com.premisave.wallet.enums.TransactionStatus;
-import com.premisave.wallet.enums.TransactionType;
+import com.garbigo.wallet.enums.Currency;
+import com.garbigo.wallet.enums.TransactionStatus;
+import com.garbigo.wallet.enums.TransactionType;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;

@@ -1,8 +1,8 @@
-package com.premisave.wallet.repository;
+package com.garbigo.wallet.repository;
 
-import com.premisave.wallet.entity.Transaction;
-import com.premisave.wallet.enums.TransactionStatus;
-import com.premisave.wallet.enums.TransactionType;
+import com.garbigo.wallet.entity.Transaction;
+import com.garbigo.wallet.enums.TransactionStatus;
+import com.garbigo.wallet.enums.TransactionType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

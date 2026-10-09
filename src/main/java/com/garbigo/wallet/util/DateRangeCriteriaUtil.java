@@ -1,4 +1,4 @@
-package com.premisave.wallet.util;
+package com.garbigo.wallet.util;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 

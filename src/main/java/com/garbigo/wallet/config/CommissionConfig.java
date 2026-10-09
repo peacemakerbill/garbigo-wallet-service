@@ -1,4 +1,4 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

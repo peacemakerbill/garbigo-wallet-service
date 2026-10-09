@@ -1,4 +1,4 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
 @SuppressWarnings("serial")
 public class WalletFrozenException extends RuntimeException {

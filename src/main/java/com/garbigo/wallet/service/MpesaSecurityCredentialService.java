@@ -1,4 +1,4 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * paths all work:
  *   - "certs/SandboxCertificate.cer"        → classpath (bundled in jar)
  *   - "classpath:certs/SandboxCertificate.cer" → same, explicit
- *   - "file:/etc/premisave/ProductionCertificate.cer" → external, e.g. a
+ *   - "file:/etc/garbigo/ProductionCertificate.cer" → external, e.g. a
  *     mounted secret you want to swap without rebuilding the jar
  *
  * Sandbox and production certificates are DIFFERENT files — verify

@@ -1,6 +1,6 @@
-package com.premisave.wallet.dto.client;
+package com.garbigo.wallet.dto.client;
 
-import com.premisave.wallet.enums.Role;
+import com.garbigo.wallet.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

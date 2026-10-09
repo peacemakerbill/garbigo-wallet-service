@@ -1,4 +1,4 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 /**
  * Shared result shape returned by each provider-specific disbursement

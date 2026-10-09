@@ -1,4 +1,4 @@
-package com.premisave.wallet.security;
+package com.garbigo.wallet.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

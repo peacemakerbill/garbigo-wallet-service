@@ -1,4 +1,4 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
 /**
  * Generic "this id doesn't exist" exception — for a lookup-by-id that

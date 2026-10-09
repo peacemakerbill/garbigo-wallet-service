@@ -1,0 +1,756 @@
+{
+	"properties": [
+		{
+			"name": "auth.service.url",
+			"type": "java.lang.String",
+			"description": "Base URL of the authentication service (e.g. http://localhost:8080).",
+			"defaultValue": "http://localhost:8080"
+		},
+		{
+			"name": "auth.service.api-key",
+			"type": "java.lang.String",
+			"description": "Shared secret injected as X-API-Key on internal service-to-service calls (e.g. C2B email validation). Must match AUTH_SERVICE_API_KEY on the auth service. Never used for user-facing Feign calls — those forward the caller's Bearer JWT instead."
+		},
+		{
+			"name": "internal.api-key",
+			"type": "java.lang.String",
+			"description": "Shared secret internal services present via X-API-Key when calling wallet-service's /internal/** endpoints (see InternalApiKeyFilter). Must match property-service's app.api-key (INTERNAL_API_KEY env var) — both services read the same INTERNAL_API_KEY name, but from their own separate .env files."
+		},
+		{
+			"name": "jwt.secret",
+			"type": "java.lang.String",
+			"description": "Base64-encoded secret key used to sign and verify JWT tokens. Must match across all services."
+		},
+		{
+			"name": "rate-limit.requests-per-minute",
+			"type": "java.lang.Integer",
+			"description": "Maximum number of requests allowed per minute per client before rate limiting kicks in.",
+			"defaultValue": 60
+		},
+		{
+			"name": "mpesa.daraja.consumer-key",
+			"type": "java.lang.String",
+			"description": "M-Pesa Daraja API consumer key."
+		},
+		{
+			"name": "mpesa.daraja.consumer-secret",
+			"type": "java.lang.String",
+			"description": "M-Pesa Daraja API consumer secret."
+		},
+		{
+			"name": "mpesa.daraja.shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa business shortcode (paybill or till number).",
+			"defaultValue": "174379"
+		},
+		{
+			"name": "mpesa.daraja.passkey",
+			"type": "java.lang.String",
+			"description": "M-Pesa Lipa Na M-Pesa Online passkey used to generate the STK push password."
+		},
+		{
+			"name": "mpesa.daraja.callback-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL that Safaricom will POST STK push callbacks to. Use ngrok locally."
+		},
+		{
+			"name": "mpesa.daraja.environment",
+			"type": "java.lang.String",
+			"description": "Daraja environment to target: 'sandbox' for testing, 'production' for live.",
+			"defaultValue": "sandbox"
+		},
+		{
+			"name": "mpesa.daraja.certificate-path",
+			"type": "java.lang.String",
+			"description": "Path to Safaricom's public X.509 certificate (.cer) used to RSA-encrypt initiator passwords into a SecurityCredential for B2C and B2B (see MpesaSecurityCredentialService). Bare paths (e.g. 'certs/SandboxCertificate.cer') resolve from the classpath — place files under src/main/resources/certs/. Prefix with 'file:' to load from an external path instead (e.g. a mounted secret). Sandbox and production use DIFFERENT certificate files.",
+			"defaultValue": "certs/SandboxCertificate.cer"
+		},
+		{
+			"name": "mpesa.daraja.b2c.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa B2C API operator username used to initiate business-to-customer disbursements/payouts."
+		},
+		{
+			"name": "mpesa.daraja.b2c.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa B2C API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.b2c.shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa organization shortcode that money is disbursed from in B2C transactions.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.b2c.command-id",
+			"type": "java.lang.String",
+			"description": "B2C transaction type: 'SalaryPayment', 'BusinessPayment', or 'PromotionPayment'.",
+			"defaultValue": "BusinessPayment"
+		},
+		{
+			"name": "mpesa.daraja.b2c.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the B2C request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.b2c.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the final B2C transaction result to. This — not the initial paymentrequest response — is the actual source of truth for success/failure."
+		},
+		{
+			"name": "mpesa.daraja.b2c.min-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Minimum KES amount accepted for a single B2C disbursement. Confirm actual tier limits with Safaricom for your shortcode.",
+			"defaultValue": 10
+		},
+		{
+			"name": "mpesa.daraja.b2c.max-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Maximum KES amount accepted for a single B2C disbursement. Confirm actual tier limits with Safaricom for your shortcode.",
+			"defaultValue": 150000
+		},
+		{
+			"name": "mpesa.daraja.b2b.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa B2B API operator username used to initiate business-to-business transfers."
+		},
+		{
+			"name": "mpesa.daraja.b2b.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa B2B API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.b2b.shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa organization shortcode that funds move from (payer) in B2B transactions.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.b2b.receiver-shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa shortcode of the receiving organization in a B2B transaction.",
+			"defaultValue": "600001"
+		},
+		{
+			"name": "mpesa.daraja.b2b.command-id",
+			"type": "java.lang.String",
+			"description": "B2B transaction type: 'BusinessPayBill', 'BusinessBuyGoods', or 'MerchantToMerchantTransfer'.",
+			"defaultValue": "BusinessPayBill"
+		},
+		{
+			"name": "mpesa.daraja.b2b.sender-identifier-type",
+			"type": "java.lang.Integer",
+			"description": "Type of shortcode sending funds in a B2B transaction. 4 = organization shortcode.",
+			"defaultValue": 4
+		},
+		{
+			"name": "mpesa.daraja.b2b.receiver-identifier-type",
+			"type": "java.lang.Integer",
+			"description": "Type of shortcode receiving funds in a B2B transaction. 4 = organization shortcode.",
+			"defaultValue": 4
+		},
+		{
+			"name": "mpesa.daraja.b2b.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the B2B request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.b2b.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the final B2B transaction result to. This — not the initial paymentrequest response — is the actual source of truth for success/failure. Note: B2B is a permissioned Safaricom API; confirm it's enabled for your shortcode before relying on it in production."
+		},
+		{
+			"name": "mpesa.daraja.b2b.min-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Minimum KES amount accepted for a single B2B payment. Confirm actual tier limits with Safaricom for your shortcode.",
+			"defaultValue": 10
+		},
+		{
+			"name": "mpesa.daraja.b2b.max-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Maximum KES amount accepted for a single B2B payment. Confirm actual tier limits with Safaricom for your shortcode.",
+			"defaultValue": 150000
+		},
+		{
+			"name": "mpesa.daraja.c2b.shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa business shortcode that C2B validation/confirmation URLs are registered against.",
+			"defaultValue": "174379"
+		},
+		{
+			"name": "mpesa.daraja.c2b.response-type",
+			"type": "java.lang.String",
+			"description": "Default action Safaricom takes if the validation URL is unreachable: 'Completed' auto-accepts the payment, 'Cancelled' rejects it.",
+			"defaultValue": "Completed"
+		},
+		{
+			"name": "mpesa.daraja.c2b.validation-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls before completing a C2B payment, allowing the transaction to be accepted or rejected. Requires validation to be enabled on the shortcode via Safaricom support."
+		},
+		{
+			"name": "mpesa.daraja.c2b.confirmation-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs completed C2B payment details to."
+		},
+		{
+			"name": "mpesa.daraja.express-checkout.receiver-shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa till shortcode being paid via B2B Express Checkout (USSD Push to Till). No initiator/security-credential needed — authenticated via the normal OAuth bearer token.",
+			"defaultValue": "174379"
+		},
+		{
+			"name": "mpesa.daraja.express-checkout.partner-name",
+			"type": "java.lang.String",
+			"description": "Partner/organization name displayed to the merchant in the USSD PIN prompt during B2B Express Checkout.",
+			"defaultValue": "Premisave"
+		},
+		{
+			"name": "mpesa.daraja.express-checkout.callback-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the B2B Express Checkout result to."
+		},
+		{
+			"name": "mpesa.daraja.account-top-up.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa API operator username used to top up a B2C shortcode's utility account from the working/MMF account (CommandID BusinessPayToBulk)."
+		},
+		{
+			"name": "mpesa.daraja.account-top-up.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.account-top-up.party-a",
+			"type": "java.lang.String",
+			"description": "M-Pesa B2C shortcode whose utility account is being topped up.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.account-top-up.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the Account Top Up request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.account-top-up.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the final Account Top Up result to."
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa API operator username used to query the status of a prior transaction. Not yet wired to a service — reserved for automatic reconciliation of stuck B2C/B2B disbursements."
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.party-a",
+			"type": "java.lang.String",
+			"description": "Shortcode or MSISDN that the transaction being queried belongs to.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.identifier-type",
+			"type": "java.lang.Integer",
+			"description": "Type of organization receiving the transaction being queried. 1 = MSISDN, 2 = Till Number, 4 = Shortcode.",
+			"defaultValue": 4
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the Transaction Status request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the Transaction Status query result to."
+		},
+		{
+			"name": "mpesa.daraja.account-balance.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa API operator username used to query Working (MMF), Utility, and Charges Paid account balances for our own shortcode."
+		},
+		{
+			"name": "mpesa.daraja.account-balance.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.account-balance.party-a",
+			"type": "java.lang.String",
+			"description": "M-Pesa shortcode whose account balance is being queried.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.account-balance.identifier-type",
+			"type": "java.lang.Integer",
+			"description": "Type of organization whose balance is being queried. 1 = MSISDN, 2 = Till Number, 4 = Shortcode.",
+			"defaultValue": 4
+		},
+		{
+			"name": "mpesa.daraja.account-balance.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the Account Balance request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.account-balance.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the Account Balance query result to."
+		},
+		{
+			"name": "mpesa.daraja.reversal.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa API operator username used to reverse a completed C2B transaction. Note: B2C payouts cannot be reversed via API — portal only."
+		},
+		{
+			"name": "mpesa.daraja.reversal.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.reversal.receiver-party",
+			"type": "java.lang.String",
+			"description": "M-Pesa shortcode that will be debited to refund the customer in a reversal.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.reversal.receiver-identifier-type",
+			"type": "java.lang.Integer",
+			"description": "Type of organization identified by receiver-party for a reversal. Must be 11 per Safaricom's spec.",
+			"defaultValue": 11
+		},
+		{
+			"name": "mpesa.daraja.reversal.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the Reversal request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.reversal.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the final Reversal result to."
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.initiator-name",
+			"type": "java.lang.String",
+			"description": "M-Pesa API operator username used to pay directly into a customer's Pochi la Biashara business wallet. Requires a B2C shortcode capable of both receiving and disbursing."
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.initiator-password",
+			"type": "java.lang.String",
+			"description": "Plaintext M-Pesa API operator password. RSA-encrypted at runtime using mpesa.daraja.certificate-path via MpesaSecurityCredentialService — never sent to Safaricom directly, and no separate security-credential property is needed."
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.party-a",
+			"type": "java.lang.String",
+			"description": "M-Pesa organization shortcode that money is disbursed from in B2Pochi transactions.",
+			"defaultValue": "600000"
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.queue-timeout-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom calls if the B2Pochi request times out in the queue."
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.result-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs the final B2Pochi transaction result to."
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.min-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Minimum KES amount accepted for a single B2Pochi payment. Confirm actual tier limits with Safaricom for your shortcode.",
+			"defaultValue": 10
+		},
+		{
+			"name": "mpesa.daraja.b2-pochi.max-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Maximum KES amount accepted for a single B2Pochi payment. Confirm actual tier limits with Safaricom for your shortcode.",
+			"defaultValue": 250000
+		},
+		{
+			"name": "mpesa.daraja.pull-transactions.shortcode",
+			"type": "java.lang.String",
+			"description": "M-Pesa organization shortcode whose C2B transactions are being pulled for reconciliation.",
+			"defaultValue": "174379"
+		},
+		{
+			"name": "mpesa.daraja.pull-transactions.nominated-number",
+			"type": "java.lang.String",
+			"description": "The Safaricom MSISDN tied to this shortcode's KYC, found on the M-PESA portal — not something you choose arbitrarily. Required for the Pull Transactions API.",
+			"defaultValue": "254722000000"
+		},
+		{
+			"name": "mpesa.daraja.pull-transactions.callback-url",
+			"type": "java.lang.String",
+			"description": "Publicly accessible HTTPS URL Safaricom POSTs pulled transaction batches to. Unlike every other operational M-Pesa API above, Pull Transactions needs NO initiator name/password/SecurityCredential — just the OAuth bearer token, same as STK Push and C2B Register URL."
+		},
+		{
+			"name": "mpesa.daraja.pull-transactions.pull-days",
+			"type": "java.lang.Integer",
+			"description": "Default lookback window (in days) when a query doesn't specify its own dates. Maximum of 2, since Safaricom only retains 48 hours of pullable transaction data.",
+			"defaultValue": 1
+		},
+		{
+			"name": "mpesa.daraja.pull-transactions.offset-value",
+			"type": "java.lang.Integer",
+			"description": "Number of records to skip in the pull transactions result set, used for pagination.",
+			"defaultValue": 0
+		},
+		{
+			"name": "stripe.secret-key",
+			"type": "java.lang.String",
+			"description": "Stripe secret API key (sk_test_* for sandbox, sk_live_* for production). Found in the Stripe Dashboard under Developers → API keys."
+		},
+		{
+			"name": "stripe.webhook-secret",
+			"type": "java.lang.String",
+			"description": "Stripe platform webhook signing secret (whsec_*) — verifies /payments/stripe/webhook (deposits, saved cards). Found in Stripe Dashboard → Webhooks → your platform endpoint → Signing secret. Distinct from stripe.connect.webhook-secret below, which is a separate destination for events on connected accounts."
+		},
+		{
+			"name": "stripe.connect.refresh-url",
+			"type": "java.lang.String",
+			"description": "Frontend URL Stripe redirects the user to if their Connect onboarding link expired, was already used, or is otherwise invalid. The frontend should request a fresh link (POST /wallet/stripe/connect/link) and redirect again from there."
+		},
+		{
+			"name": "stripe.connect.return-url",
+			"type": "java.lang.String",
+			"description": "Frontend URL Stripe redirects the user to after finishing or exiting Connect onboarding. Reaching this URL does not guarantee onboarding fully succeeded — the frontend should call POST /wallet/stripe/connect/refresh or GET /wallet/stripe/connect/account to confirm actual status."
+		},
+		{
+			"name": "stripe.connect.webhook-secret",
+			"type": "java.lang.String",
+			"description": "Stripe Connect webhook signing secret (whsec_*) — verifies /payments/stripe/connect/webhook (account.updated, payout.paid, payout.failed on connected accounts). Created as a SEPARATE destination from stripe.webhook-secret above via Dashboard → Webhooks → new destination → 'Listen to events on Connected accounts' — Stripe does not deliver connected-account events to the platform webhook's destination."
+		},
+		{
+			"name": "paypal.client-id",
+			"type": "java.lang.String",
+			"description": "PayPal REST API client ID. Found in the PayPal Developer Dashboard under your app credentials."
+		},
+		{
+			"name": "paypal.client-secret",
+			"type": "java.lang.String",
+			"description": "PayPal REST API client secret. Found in the PayPal Developer Dashboard under your app credentials."
+		},
+		{
+			"name": "paypal.environment",
+			"type": "java.lang.String",
+			"description": "PayPal environment to target: 'sandbox' for testing, 'production' for live.",
+			"defaultValue": "sandbox"
+		},
+		{
+			"name": "paypal.webhook-id",
+			"type": "java.lang.String",
+			"description": "PayPal Webhook ID from the Developer Dashboard, used to verify that incoming /payments/paypal/webhook requests genuinely came from PayPal (see PaypalService.verifyWebhookSignature). Register your endpoint (https://<your-domain>/payments/paypal/webhook) under your app's Webhooks section to obtain this. If left blank, webhook verification fails closed and all incoming PayPal webhooks are rejected."
+		},
+		{
+			"name": "paypal.return-url",
+			"type": "java.lang.String",
+			"description": "URL PayPal redirects the customer to after approving an order that requires a separate approval step (no saved/vaulted payment source, or a saved source that needs re-authorization)."
+		},
+		{
+			"name": "paypal.cancel-url",
+			"type": "java.lang.String",
+			"description": "URL PayPal redirects the customer to if they cancel out of order approval instead of completing it."
+		},
+		{
+			"name": "flutterwave.client-id",
+			"type": "java.lang.String",
+			"description": "Flutterwave v4 OAuth2 client_credentials client ID. Replaces v3's static Secret Key/Public Key model entirely — v4 has no 'public key'. Found in the Flutterwave Dashboard under API keys."
+		},
+		{
+			"name": "flutterwave.client-secret",
+			"type": "java.lang.String",
+			"description": "Flutterwave v4 OAuth2 client_credentials client secret, used with flutterwave.client-id to obtain access tokens from the OAuth2 token endpoint (see FlutterwaveService.getAccessToken)."
+		},
+		{
+			"name": "flutterwave.encryption-key",
+			"type": "java.lang.String",
+			"description": "Flutterwave encryption key, found in the Flutterwave Dashboard alongside your API keys."
+		},
+		{
+			"name": "flutterwave.environment",
+			"type": "java.lang.String",
+			"description": "Flutterwave environment to target: 'sandbox' or 'production'. Unlike v3, this DOES determine the base URL (see FlutterwaveConfig.baseUrl()) — sandbox and production are genuinely different hosts, not just different key prefixes on one URL.",
+			"defaultValue": "sandbox"
+		},
+		{
+			"name": "flutterwave.webhook-secret-hash",
+			"type": "java.lang.String",
+			"description": "Arbitrary shared-secret string configured in the Flutterwave Dashboard (Settings → Webhooks → Secret Hash). Used as the HMAC-SHA256 key to verify the 'flutterwave-signature' header on incoming /payments/flutterwave/webhook requests (see FlutterwaveService.verifyWebhookSignature) — NOT a plain string comparison the way v3's 'verif-hash' worked."
+		},
+		{
+			"name": "flutterwave.redirect-url",
+			"type": "java.lang.String",
+			"description": "URL Flutterwave redirects the customer to after completing a charge's authorization step (3DS, mobile money approval, etc.)."
+		},
+		{
+			"name": "flutterwave.sandbox-scenario-key",
+			"type": "java.lang.String",
+			"description": "SANDBOX TESTING ONLY. When set, every write call to Flutterwave carries this value as the 'X-Scenario-Key' header, forcing a deterministic mock outcome (e.g. 'scenario:successful', 'scenario:failed', 'scenario:auth_redirect') instead of default sandbox behavior. Leave unset in production — sending this against the live API is rejected or ignored depending on endpoint, and its presence in production config is a signal something is misconfigured."
+		},
+		{
+			"name": "flutterwave.transfer.min-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Minimum amount accepted for a single Flutterwave transfer (bank or mobile money disbursement). Confirm actual tier limits with Flutterwave for your account.",
+			"defaultValue": 1
+		},
+		{
+			"name": "flutterwave.transfer.max-amount",
+			"type": "java.math.BigDecimal",
+			"description": "Maximum amount accepted for a single Flutterwave transfer (bank or mobile money disbursement). Confirm actual tier limits with Flutterwave for your account.",
+			"defaultValue": 5000
+		},
+		{
+			"name": "flutterwave.transfer.source-currency",
+			"type": "java.lang.String",
+			"description": "The currency your Flutterwave balance actually holds — used as payment_instruction.source_currency on every payout. NOT automatically the same as the destination currency the recipient receives in. Confirm your actual settlement/balance currency in the Flutterwave dashboard before relying on this in production.",
+			"defaultValue": "KES"
+		},
+		{
+			"name": "nowpayments.base-url",
+			"type": "java.lang.String",
+			"description": "NOWPayments API host. Sandbox and production are genuinely separate hosts with separate accounts/keys, not just different key prefixes on one URL — 'https://api-sandbox.nowpayments.io' for testing, 'https://api.nowpayments.io' for production. No trailing slash.",
+			"defaultValue": "https://api-sandbox.nowpayments.io"
+		},
+		{
+			"name": "nowpayments.api-key",
+			"type": "java.lang.String",
+			"description": "NOWPayments API key, sent as the 'x-api-key' header on every request. Found in Dashboard → Settings → Payments → API keys. Requires at least one wallet added under Payout wallets before a key can be generated."
+		},
+		{
+			"name": "nowpayments.ipn-secret",
+			"type": "java.lang.String",
+			"description": "Verifies the 'x-nowpayments-sig' header on incoming IPN webhooks (see NowPaymentsService.verifyIpnSignature) — HMAC-SHA512 over the recursively-key-sorted JSON body. Found in Dashboard → Settings → Payments → Instant payment notifications. NOT the same value as nowpayments.api-key above, and NOT interchangeable between sandbox/production."
+		},
+		{
+			"name": "nowpayments.callback-url",
+			"type": "java.lang.String",
+			"description": "Your own public HTTPS URL for /payments/nowpayments/webhook, sent as ipn_callback_url on every Create Payment request. No sandbox tunnel/CLI tooling exists here the way Stripe CLI's 'stripe listen' does — this needs to be a real reachable URL (e.g. via zrok/ngrok in dev) even while testing in sandbox."
+		},
+		{
+			"name": "nowpayments.payout-email",
+			"type": "java.lang.String",
+			"description": "Your NOWPayments DASHBOARD LOGIN email — NOT the same thing as nowpayments.api-key, and a meaningfully more sensitive secret. Required only for payouts: obtains a short-lived JWT via POST /v1/auth (see NowPaymentsService.getAuthToken), needed in addition to the x-api-key header every other call uses. Deposits never touch this."
+		},
+		{
+			"name": "nowpayments.payout-password",
+			"type": "java.lang.String",
+			"description": "Your NOWPayments DASHBOARD LOGIN password — paired with nowpayments.payout-email above for the same POST /v1/auth call. Treat this with real secrets-management discipline, more so than a typical API key — whoever holds it can log into the dashboard directly, not just make scoped API calls."
+		},
+		{
+			"name": "commission.internal-transfer-rate",
+			"type": "java.math.BigDecimal",
+			"description": "Commission rate taken on internal wallet-to-wallet transfers (POST /wallet/transfer, POST /internal/transfer) — a decimal fraction, e.g. 0.01 for 1%, not 1. Expected lower than commission.gateway-rate, matching real payment-processing economics (an internal transfer costs nothing external, unlike a gateway withdrawal).",
+			"defaultValue": 0.01
+		},
+		{
+			"name": "commission.gateway-rate",
+			"type": "java.math.BigDecimal",
+			"description": "Commission rate taken on gateway-bound disbursements (M-Pesa B2C/B2Pochi, PayPal, Stripe, Flutterwave, NOWPayments) — a decimal fraction, e.g. 0.03 for 3%, not 3. Expected higher than commission.internal-transfer-rate, roughly in line with typical real-world gateway processing fees.",
+			"defaultValue": 0.03
+		},
+		{
+			"name": "frontend.url",
+			"type": "java.lang.String",
+			"description": "Frontend application URL used for CORS allowed-origins configuration.",
+			"defaultValue": "http://localhost:3000"
+		},
+		{
+			"name": "notifications.b2b-recipients",
+			"type": "java.lang.String",
+			"description": "Comma-separated admin/finance email addresses notified on every B2B success/failure (see MpesaDisbursementService.notifyB2BRecipients). B2B never touches a customer wallet, so there's no wallet owner's email to notify the way B2C/B2Pochi have — this is who gets it instead. Whitespace around commas is trimmed. Left empty/unset is safe: logs a warning and sends no email, never throws."
+		},
+		{
+			"name": "exchange-rate.refresh-interval-ms",
+			"type": "java.lang.Long",
+			"description": "How often (in milliseconds) ExchangeRateService's scheduled job re-fetches every previously-saved currency pair from Frankfurter and refreshes the Redis/MongoDB cache. Read directly by the @Scheduled annotation itself via this same property placeholder, not through a properties class at annotation-processing time — kept in sync with the same default (20 minutes) regardless.",
+			"defaultValue": 1200000
+		},
+		{
+			"name": "exchange-rate.max-retries",
+			"type": "java.lang.Integer",
+			"description": "Maximum retry attempts ExchangeRateService's scheduled refresh makes per currency pair before giving up on that pair for the current refresh cycle and moving on to the next.",
+			"defaultValue": 3
+		}
+	],
+	"hints": [
+		{
+			"name": "mpesa.daraja.environment.values",
+			"values": [
+				{
+					"value": "sandbox",
+					"description": "Safaricom Daraja sandbox environment for testing."
+				},
+				{
+					"value": "production",
+					"description": "Safaricom Daraja live environment."
+				}
+			]
+		},
+		{
+			"name": "mpesa.daraja.b2c.command-id.values",
+			"values": [
+				{
+					"value": "SalaryPayment",
+					"description": "Payment of salaries to employees."
+				},
+				{
+					"value": "BusinessPayment",
+					"description": "General business disbursement to a customer."
+				},
+				{
+					"value": "PromotionPayment",
+					"description": "Promotional or reward payment to a customer."
+				}
+			]
+		},
+		{
+			"name": "mpesa.daraja.b2b.command-id.values",
+			"values": [
+				{
+					"value": "BusinessPayBill",
+					"description": "Pay bill from one business shortcode to another."
+				},
+				{
+					"value": "BusinessBuyGoods",
+					"description": "Buy goods from one business shortcode to another (till payment)."
+				},
+				{
+					"value": "MerchantToMerchantTransfer",
+					"description": "Transfer funds between merchant accounts."
+				},
+				{
+					"value": "BusinessTransferFromMMFToUtility",
+					"description": "Transfer from Merchant Mobile Fund to Utility account."
+				}
+			]
+		},
+		{
+			"name": "mpesa.daraja.c2b.response-type.values",
+			"values": [
+				{
+					"value": "Completed",
+					"description": "Auto-accept the payment if the validation URL is unreachable."
+				},
+				{
+					"value": "Cancelled",
+					"description": "Auto-reject the payment if the validation URL is unreachable."
+				}
+			]
+		},
+		{
+			"name": "mpesa.daraja.transaction-status.identifier-type.values",
+			"values": [
+				{
+					"value": 1,
+					"description": "MSISDN (phone number)."
+				},
+				{
+					"value": 2,
+					"description": "Till Number."
+				},
+				{
+					"value": 4,
+					"description": "Organization Shortcode."
+				}
+			]
+		},
+		{
+			"name": "mpesa.daraja.account-balance.identifier-type.values",
+			"values": [
+				{
+					"value": 1,
+					"description": "MSISDN (phone number)."
+				},
+				{
+					"value": 2,
+					"description": "Till Number."
+				},
+				{
+					"value": 4,
+					"description": "Organization Shortcode."
+				}
+			]
+		},
+		{
+			"name": "paypal.environment.values",
+			"values": [
+				{
+					"value": "sandbox",
+					"description": "PayPal sandbox environment for testing."
+				},
+				{
+					"value": "production",
+					"description": "PayPal live environment."
+				}
+			]
+		},
+		{
+			"name": "flutterwave.environment.values",
+			"values": [
+				{
+					"value": "sandbox",
+					"description": "Flutterwave sandbox environment — hits developersandbox-api.flutterwave.com."
+				},
+				{
+					"value": "production",
+					"description": "Flutterwave live environment — hits f4bexperience.flutterwave.com."
+				}
+			]
+		},
+		{
+			"name": "logging.level.values",
+			"values": [
+				{
+					"value": "TRACE"
+				},
+				{
+					"value": "DEBUG"
+				},
+				{
+					"value": "INFO"
+				},
+				{
+					"value": "WARN"
+				},
+				{
+					"value": "ERROR"
+				},
+				{
+					"value": "FATAL"
+				},
+				{
+					"value": "OFF"
+				}
+			]
+		},
+		{
+			"name": "logging.level.keys",
+			"values": [
+				{
+					"value": "root",
+					"description": "Root logger level."
+				},
+				{
+					"value": "com.premisave",
+					"description": "All Premisave application classes."
+				},
+				{
+					"value": "org.springframework.data.mongodb",
+					"description": "MongoDB data layer."
+				},
+				{
+					"value": "org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport",
+					"description": "Suppresses Redis/MongoDB repository conflict warnings."
+				},
+				{
+					"value": "org.springframework.cloud.commons.util.InetUtils",
+					"description": "Suppresses hostname resolution warnings from Spring Cloud."
+				}
+			]
+		}
+	]
+}

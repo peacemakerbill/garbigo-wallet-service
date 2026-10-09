@@ -1,8 +1,8 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
-import com.premisave.wallet.config.MpesaConfig;
+import com.garbigo.wallet.config.MpesaConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;

@@ -1,9 +1,9 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.config.ExchangeRateConfig;
-import com.premisave.wallet.dto.ExchangeRateEntry;
-import com.premisave.wallet.entity.ExchangeRate;
-import com.premisave.wallet.repository.ExchangeRateRepository;
+import com.garbigo.wallet.config.ExchangeRateConfig;
+import com.garbigo.wallet.dto.ExchangeRateEntry;
+import com.garbigo.wallet.entity.ExchangeRate;
+import com.garbigo.wallet.repository.ExchangeRateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

@@ -1,4 +1,4 @@
-package com.premisave.wallet.enums;
+package com.garbigo.wallet.enums;
 
 /**
  * Deposit lifecycle status — deliberately its own enum, not a reuse of

@@ -1,4 +1,4 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
 /**
  * Thrown when Safaricom rejects a C2B Register URL call because URLs are

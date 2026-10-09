@@ -1,9 +1,9 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
-import com.premisave.wallet.config.NowPaymentsConfig;
+import com.garbigo.wallet.config.NowPaymentsConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
@@ -265,7 +265,7 @@ public class NowPaymentsService {
      * Creates a payout — POST /v1/payout. Single-recipient even though
      * NOWPayments' own "Mass Payouts" branding implies batches; the
      * withdrawals array always carries exactly one entry here, matching
-     * how Premisave models one user's one withdrawal request.
+     * how garbigo models one user's one withdrawal request.
      *
      * DOES NOT move funds by itself. NOWPayments requires a SEPARATE
      * verification step (see verifyPayout below) before this executes —
@@ -459,7 +459,7 @@ public class NowPaymentsService {
     public record BalanceResult(boolean success, java.util.List<CurrencyBalanceEntry> balances, String message) {}
 
     /**
-     * GET /v1/balance — Premisave's OWN NOWPayments custody balance.
+     * GET /v1/balance — garbigo's OWN NOWPayments custody balance.
      *
      * Auth CONFIRMED via NOWPayments' own official onboarding
      * documentation, not assumed: only x-api-key is sent, no JWT/

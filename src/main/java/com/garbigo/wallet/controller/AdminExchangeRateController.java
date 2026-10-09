@@ -1,9 +1,9 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.ExchangeRateEntry;
-import com.premisave.wallet.entity.ExchangeRate;
-import com.premisave.wallet.service.ExchangeRateService;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.ExchangeRateEntry;
+import com.garbigo.wallet.entity.ExchangeRate;
+import com.garbigo.wallet.service.ExchangeRateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

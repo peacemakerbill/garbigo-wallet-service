@@ -1,15 +1,15 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.*;
-import com.premisave.wallet.entity.Disbursement;
-import com.premisave.wallet.entity.MpesaOperation;
-import com.premisave.wallet.enums.TransactionStatus;
-import com.premisave.wallet.enums.TransactionType;
-import com.premisave.wallet.service.AdminWalletService;
-import com.premisave.wallet.service.DisbursementService;
-import com.premisave.wallet.service.MpesaOperationsService;
-import com.premisave.wallet.service.MpesaService;
-import com.premisave.wallet.service.PullTransactionService;
+import com.garbigo.wallet.dto.*;
+import com.garbigo.wallet.entity.Disbursement;
+import com.garbigo.wallet.entity.MpesaOperation;
+import com.garbigo.wallet.enums.TransactionStatus;
+import com.garbigo.wallet.enums.TransactionType;
+import com.garbigo.wallet.service.AdminWalletService;
+import com.garbigo.wallet.service.DisbursementService;
+import com.garbigo.wallet.service.MpesaOperationsService;
+import com.garbigo.wallet.service.MpesaService;
+import com.garbigo.wallet.service.PullTransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

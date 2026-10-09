@@ -1,7 +1,7 @@
-package com.premisave.wallet.exception;
+package com.garbigo.wallet.exception;
 
-import com.premisave.wallet.controller.MpesaC2BCallbackController;
-import com.premisave.wallet.controller.PaymentCallbackController;
+import com.garbigo.wallet.controller.MpesaC2BCallbackController;
+import com.garbigo.wallet.controller.PaymentCallbackController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;

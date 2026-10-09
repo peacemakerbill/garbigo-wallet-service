@@ -1,7 +1,7 @@
-package com.premisave.wallet.client;
+package com.garbigo.wallet.client;
 
-import com.premisave.wallet.client.config.AuthServiceFeignConfig;
-import com.premisave.wallet.dto.client.UserDetailsDto;
+import com.garbigo.wallet.client.config.AuthServiceFeignConfig;
+import com.garbigo.wallet.dto.client.UserDetailsDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

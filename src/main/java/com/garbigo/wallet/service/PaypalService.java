@@ -1,8 +1,8 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
-import com.premisave.wallet.exception.PaypalCaptureException;
+import com.garbigo.wallet.exception.PaypalCaptureException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -132,7 +132,7 @@ public class PaypalService {
                         "currency_code", currency.toUpperCase(),
                         "value", usdAmount.toPlainString()
                 ),
-                "description", "Premisave wallet deposit"
+                "description", "garbigo wallet deposit"
         );
 
         Map<String, Object> experienceContext = Map.of(
@@ -500,7 +500,7 @@ public class PaypalService {
         Map<String, Object> requestBody = Map.of(
                 "sender_batch_header", Map.of(
                         "sender_batch_id", senderBatchId,
-                        "email_subject", "You have a payment from Premisave",
+                        "email_subject", "You have a payment from garbigo",
                         "email_message", "Your wallet disbursement has been processed."
                 ),
                 "items", List.of(Map.of(
@@ -510,7 +510,7 @@ public class PaypalService {
                                 "currency", currency.toUpperCase()
                         ),
                         "receiver", recipientEmail,
-                        "note", "Premisave wallet disbursement",
+                        "note", "garbigo wallet disbursement",
                         "sender_item_id", senderBatchId
                 ))
         );
@@ -552,7 +552,7 @@ public class PaypalService {
     public record BalanceResult(boolean success, List<CurrencyBalanceEntry> balances, String message) {}
 
     /**
-     * GET /v1/reporting/balances — Premisave's OWN PayPal balance.
+     * GET /v1/reporting/balances — garbigo's OWN PayPal balance.
      * Confirmed real and current directly from PayPal's docs — genuinely
      * different from every other provider here in two ways:
      *

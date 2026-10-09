@@ -1,6 +1,6 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.config.StripeConfig;
+import com.garbigo.wallet.config.StripeConfig;
 import com.stripe.StripeClient;
 import com.stripe.exception.CardException;
 import com.stripe.exception.StripeException;
@@ -181,7 +181,7 @@ public class StripeService {
         PaymentIntentCreateParams.Builder builder = PaymentIntentCreateParams.builder()
                 .setAmount(amountCents)
                 .setCurrency(currency.toLowerCase())
-                .setDescription("Premisave wallet deposit")
+                .setDescription("garbigo wallet deposit")
                 .setCustomer(customerId)
                 .addPaymentMethodType("card")
                 .putMetadata("idempotency_key", idempotencyKey)
@@ -210,7 +210,7 @@ public class StripeService {
                     PaymentIntentCreateParams retryParams = PaymentIntentCreateParams.builder()
                             .setAmount(amountCents)
                             .setCurrency(currency.toLowerCase())
-                            .setDescription("Premisave wallet deposit")
+                            .setDescription("garbigo wallet deposit")
                             .setCustomer(customerId)
                             .setPaymentMethod(existingPaymentMethodId)
                             .addPaymentMethodType("card")
@@ -240,9 +240,9 @@ public class StripeService {
         }
     }
 
-    // ─── Payout (Premisave's own bank account — platform-level, NOT per-user) ─
-    // Kept for operational use (e.g. sweeping Premisave's own Stripe balance
-    // to Premisave's own bank). NOT used for user withdrawals — see the
+    // ─── Payout (garbigo's own bank account — platform-level, NOT per-user) ─
+    // Kept for operational use (e.g. sweeping garbigo's own Stripe balance
+    // to garbigo's own bank). NOT used for user withdrawals — see the
     // Stripe Connect section below for that; a plain Payout has no way to
     // target an arbitrary user's own bank account.
 
@@ -252,7 +252,7 @@ public class StripeService {
             PayoutCreateParams params = PayoutCreateParams.builder()
                     .setAmount(amountCents)
                     .setCurrency(currency.toLowerCase())
-                    .setDescription("Premisave platform payout")
+                    .setDescription("garbigo platform payout")
                     .build();
             Payout payout = stripeClient.v1().payouts().create(params);
             log.info("Stripe platform Payout created: id={} status={}", payout.getId(), payout.getStatus());
@@ -286,7 +286,7 @@ public class StripeService {
      * Creates an Express connected account (if the wallet doesn't already
      * have one — pass the existing id to reuse it, e.g. to resume/redo
      * onboarding) and a single-use Account Link the frontend redirects the
-     * user to. Requesting the "transfers" capability is what lets Premisave
+     * user to. Requesting the "transfers" capability is what lets garbigo
      * later Transfer funds into this account's balance; Stripe's hosted
      * onboarding form collects everything required for it (KYC + external
      * bank account) directly — raw bank details never touch our servers.
@@ -354,7 +354,7 @@ public class StripeService {
     public record ConnectPayoutResult(boolean success, String message, String transferId, String payoutId) {}
 
     /**
-     * Two-step withdrawal: Transfer funds from Premisave's own Stripe
+     * Two-step withdrawal: Transfer funds from garbigo's own Stripe
      * balance into the user's connected account, then immediately trigger a
      * Payout FROM that connected account to their external bank, acting on
      * their behalf via the Stripe-Account header (RequestOptions.
@@ -365,7 +365,7 @@ public class StripeService {
      *  - Transfer fails: no money has moved at all. Safe to just report
      *    failure — same as every other PENDING-never-happened provider path.
      *  - Payout fails AFTER a successful Transfer: money HAS already left
-     *    Premisave's platform balance and is sitting in the connected
+     *    garbigo's platform balance and is sitting in the connected
      *    account's own Stripe balance. This is NOT the same "nothing moved,
      *    nothing to refund" situation as the other providers' failure
      *    paths — see DisbursementService.completeStripeConnectDisbursement
@@ -385,7 +385,7 @@ public class StripeService {
                     .setAmount(amountCents)
                     .setCurrency(currency.toLowerCase())
                     .setDestination(connectedAccountId)
-                    .setDescription("Premisave wallet withdrawal")
+                    .setDescription("garbigo wallet withdrawal")
                     .build();
             RequestOptions transferOptions = RequestOptions.builder()
                     .setIdempotencyKey(idempotencyKey + "-transfer")
@@ -403,7 +403,7 @@ public class StripeService {
             PayoutCreateParams payoutParams = PayoutCreateParams.builder()
                     .setAmount(amountCents)
                     .setCurrency(currency.toLowerCase())
-                    .setDescription("Premisave wallet withdrawal")
+                    .setDescription("garbigo wallet withdrawal")
                     .build();
             RequestOptions payoutOptions = RequestOptions.builder()
                     .setStripeAccount(connectedAccountId)
@@ -432,7 +432,7 @@ public class StripeService {
     public record BalanceResult(boolean success, java.util.List<CurrencyBalanceEntry> balances, String message) {}
 
     /**
-     * GET /v1/balance — Premisave's OWN Stripe balance (not any
+     * GET /v1/balance — garbigo's OWN Stripe balance (not any
      * customer's), broken down by currency with separate available and
      * pending figures. Simple, synchronous, real-time — the most
      * straightforward of the five providers' balance checks; no async

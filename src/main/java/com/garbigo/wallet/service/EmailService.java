@@ -1,4 +1,4 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -85,7 +85,7 @@ public class EmailService {
      * callback provides one (confirmed for M-Pesa C2B) — null for a
      * self-deposit or a gateway with no equivalent field.
      * providerReference: the gateway's OWN transaction id/receipt number
-     * — distinct from the "reference" argument, which is Premisave's own
+     * — distinct from the "reference" argument, which is garbigo's own
      * internal tracking id (for M-Pesa STK specifically, that's the long
      * checkoutRequestId the customer never sees; this is the short
      * receipt number their own M-Pesa SMS shows them).
@@ -142,7 +142,7 @@ public class EmailService {
                 "Account Number", details.accountNumber(),
                 "Account ID", details.accountId()
         ));
-        send(toEmail, "Deposit Confirmation - Premisave", "deposit-confirmation-email.html", vars);
+        send(toEmail, "Deposit Confirmation - garbigo", "deposit-confirmation-email.html", vars);
     }
 
     /** destination: shown exactly as given, no masking. */
@@ -161,7 +161,7 @@ public class EmailService {
                 "Account Number", details.accountNumber(),
                 "Account ID", details.accountId()
         ));
-        send(toEmail, "Withdrawal Successful - Premisave", "disbursement-success-email.html", vars);
+        send(toEmail, "Withdrawal Successful - garbigo", "disbursement-success-email.html", vars);
     }
 
     /**
@@ -184,7 +184,7 @@ public class EmailService {
                 "Account Number", details.accountNumber(),
                 "Account ID", details.accountId()
         ));
-        send(toEmail, "Disbursement Failed - Premisave", "disbursement-failed-email.html", vars);
+        send(toEmail, "Disbursement Failed - garbigo", "disbursement-failed-email.html", vars);
     }
 
     /**
@@ -227,7 +227,7 @@ public class EmailService {
             vars.put("counterpartyLabel", "Received From");
         }
 
-        String subject = (isSenderCopy ? "Transfer Sent" : "Transfer Received") + " - Premisave";
+        String subject = (isSenderCopy ? "Transfer Sent" : "Transfer Received") + " - garbigo";
         send(toEmail, subject, "transfer-notification-email.html", vars);
     }
 
@@ -254,7 +254,7 @@ public class EmailService {
                 "Account Number", accountNumber,
                 "Account ID", accountId
         ));
-        send(toEmail, "Payment Confirmation - Premisave", "payment-confirmation-email.html", vars);
+        send(toEmail, "Payment Confirmation - garbigo", "payment-confirmation-email.html", vars);
     }
 
     private void send(String toEmail, String subject, String templateFile, Map<String, String> vars) {

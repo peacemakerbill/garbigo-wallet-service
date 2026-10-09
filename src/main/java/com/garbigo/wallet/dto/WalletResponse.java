@@ -1,6 +1,6 @@
-package com.premisave.wallet.dto;
+package com.garbigo.wallet.dto;
 
-import com.premisave.wallet.enums.Currency;
+import com.garbigo.wallet.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,7 @@
-package com.premisave.wallet.repository;
+package com.garbigo.wallet.repository;
 
-import com.premisave.wallet.entity.MpesaOperation;
-import com.premisave.wallet.enums.DisbursementStatus;
+import com.garbigo.wallet.entity.MpesaOperation;
+import com.garbigo.wallet.enums.DisbursementStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDateTime;

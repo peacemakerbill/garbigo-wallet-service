@@ -10,11 +10,11 @@
 		<version>4.1.1</version>
 	</parent>
 
-	<groupId>com.premisave</groupId>
-	<artifactId>premisave-wallet-service</artifactId>
+	<groupId>com.garbigo.wallet</groupId>
+	<artifactId>garbigo-wallet-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Premisave Wallet Service</name>
-	<description>Digital Wallet and Payment Service for Premisave</description>
+	<name>GarbiGo Wallet Service</name>
+	<description>Digital Wallet and Payment Service for GarbiGo</description>
 	
 
 	<properties>

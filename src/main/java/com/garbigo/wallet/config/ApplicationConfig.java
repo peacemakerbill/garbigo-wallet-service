@@ -1,4 +1,4 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

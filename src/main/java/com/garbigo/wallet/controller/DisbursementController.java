@@ -1,13 +1,13 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.ApiResponse;
-import com.premisave.wallet.dto.B2PochiRequest;
-import com.premisave.wallet.dto.DisbursementRecordResponse;
-import com.premisave.wallet.dto.DisbursementRequest;
-import com.premisave.wallet.dto.DisbursementResponse;
-import com.premisave.wallet.dto.NowPaymentsVerifyRequest;
-import com.premisave.wallet.enums.DisbursementStatus;
-import com.premisave.wallet.service.DisbursementService;
+import com.garbigo.wallet.dto.ApiResponse;
+import com.garbigo.wallet.dto.B2PochiRequest;
+import com.garbigo.wallet.dto.DisbursementRecordResponse;
+import com.garbigo.wallet.dto.DisbursementRequest;
+import com.garbigo.wallet.dto.DisbursementResponse;
+import com.garbigo.wallet.dto.NowPaymentsVerifyRequest;
+import com.garbigo.wallet.enums.DisbursementStatus;
+import com.garbigo.wallet.service.DisbursementService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class DisbursementController {
     }
 
     /**
-     * Withdraws from the caller's own Premisave wallet directly into their
+     * Withdraws from the caller's own garbigo wallet directly into their
      * own Pochi la Biashara business account (CommandID BusinessPayToPochi)
      * instead of their main M-Pesa balance. Same as the generic
      * POST /disbursements above — checks wallet exists/not frozen/sufficient

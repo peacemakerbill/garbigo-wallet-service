@@ -1,7 +1,7 @@
-package com.premisave.wallet.service;
+package com.garbigo.wallet.service;
 
-import com.premisave.wallet.client.AuthServiceClient;
-import com.premisave.wallet.dto.client.UserDetailsDto;
+import com.garbigo.wallet.client.AuthServiceClient;
+import com.garbigo.wallet.dto.client.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

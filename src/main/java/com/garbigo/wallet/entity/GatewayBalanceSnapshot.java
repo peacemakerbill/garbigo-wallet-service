@@ -1,4 +1,4 @@
-package com.premisave.wallet.entity;
+package com.garbigo.wallet.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

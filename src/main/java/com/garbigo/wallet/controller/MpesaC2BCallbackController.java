@@ -1,7 +1,7 @@
-package com.premisave.wallet.controller;
+package com.garbigo.wallet.controller;
 
-import com.premisave.wallet.dto.MpesaC2BCallbackRequest;
-import com.premisave.wallet.service.MpesaC2BService;
+import com.garbigo.wallet.dto.MpesaC2BCallbackRequest;
+import com.garbigo.wallet.service.MpesaC2BService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

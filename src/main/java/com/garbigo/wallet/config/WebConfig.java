@@ -1,6 +1,6 @@
-package com.premisave.wallet.config;
+package com.garbigo.wallet.config;
 
-import com.premisave.wallet.util.RateLimiterInterceptor;
+import com.garbigo.wallet.util.RateLimiterInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
