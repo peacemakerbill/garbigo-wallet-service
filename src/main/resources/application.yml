@@ -1,9 +1,9 @@
 spring:
   application:
-    name: premisave-wallet-service
+    name: garbigo-wallet-service
 
   mongodb:
-    uri: ${MONGODB_URI:mongodb://localhost:27017/premisave-wallet}
+    uri: ${MONGODB_URI:mongodb://localhost:27017/garbigo-wallet}
 
   data:
     redis:
@@ -300,7 +300,7 @@ springdoc:
 
 logging:
   level:
-    "[com.premisave]": DEBUG
+    "[com.garbigo]": DEBUG
     "[org.springframework.data.mongodb]": WARN
     "[org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport]": ERROR
     "[org.springframework.cloud.commons.util.InetUtils]": ERROR
