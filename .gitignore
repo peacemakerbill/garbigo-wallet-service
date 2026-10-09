@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore all .env files anywhere in the repo (but NOT .env.example —
+# that's a template with placeholder values and should stay committed)
+**/.env
