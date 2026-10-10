@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * refreshIntervalMs isn't actually read from here at runtime — @Scheduled
  * needs a literal property-placeholder string
@@ -24,4 +26,7 @@ public class ExchangeRateConfig {
 
     /** How many attempts per currency pair before giving up on that pair for this refresh cycle. */
     private int maxRetries = 3;
+
+    /** Base currencies loaded in bulk from Frankfurter at startup when the exchange_rates collection is empty (first run on a new database). Code default only, no yml entry needed. */
+    private List<String> seedBases = List.of("USD");
 }

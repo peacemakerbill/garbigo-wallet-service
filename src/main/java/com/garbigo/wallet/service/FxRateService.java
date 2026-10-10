@@ -229,7 +229,7 @@ public class FxRateService {
             }
 
             BigDecimal rate = rateNode.decimalValue();
-            log.info("Frankfurter live rate fetched: {} -> {} = {}", base, quote, rate);
+            log.debug("Frankfurter live rate fetched: {} -> {} = {}", base, quote, rate);
             return rate;
         } catch (IOException e) {
             throw new IllegalStateException(

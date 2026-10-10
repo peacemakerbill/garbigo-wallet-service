@@ -133,7 +133,7 @@ public class ExchangeRateService {
 
             cacheInRedisBestEffort(cacheKey(base, quote), entry.getRate());
         }
-        log.info("Saved/updated {} exchange rate(s)", entries.size());
+        log.debug("Saved/updated {} exchange rate(s)", entries.size());
     }
 
     public List<ExchangeRate> getAllRates() {
@@ -184,11 +184,21 @@ public class ExchangeRateService {
     public void scheduledRefresh() {
         List<ExchangeRate> existingPairs = exchangeRateRepository.findAll();
         if (existingPairs.isEmpty()) {
-            log.info("Exchange rate refresh skipped — no pairs have been saved/requested yet");
+            // Fresh database: nothing to refresh yet, so load every rate for the
+            // configured seed bases once. This runs on the first scheduler tick,
+            // which fires right at startup, then the normal refresh takes over.
+            seedInitialRates();
+            existingPairs = exchangeRateRepository.findAll();
+            if (existingPairs.isEmpty()) {
+                log.info("Exchange rate refresh skipped — no pairs saved and the initial load did not succeed; will retry next cycle");
+                return;
+            }
+            log.info("Initial exchange rate load complete: {} pair(s) saved", existingPairs.size());
             return;
         }
 
-        log.info("Starting scheduled exchange rate refresh for {} previously-used pair(s)", existingPairs.size());
+        long startedAt = System.currentTimeMillis();
+        log.debug("Starting scheduled exchange rate refresh for {} previously-used pair(s)", existingPairs.size());
         int refreshed = 0, failed = 0;
 
         for (ExchangeRate pair : existingPairs) {
@@ -217,7 +227,34 @@ public class ExchangeRateService {
             }
         }
 
-        log.info("Exchange rate refresh complete: {} refreshed, {} failed", refreshed, failed);
+        log.info("Exchange rate refresh complete: {} pair(s) refreshed, {} failed, took {} ms",
+                refreshed, failed, System.currentTimeMillis() - startedAt);
+    }
+
+    /**
+     * One-time bulk load for an empty exchange_rates collection: for each base
+     * in ExchangeRateConfig.seedBases (USD), fetches every available rate from Frankfurter
+     * and saves it (same path as POST /admin/exchange-rates/fetch). A failing
+     * base is logged and skipped so the others still load; an empty list
+     * disables seeding.
+     */
+    private void seedInitialRates() {
+        List<String> bases = config.getSeedBases();
+        if (bases == null || bases.isEmpty()) {
+            return;
+        }
+        for (String base : bases) {
+            if (base == null || base.isBlank()) continue;
+            for (int attempt = 1; attempt <= config.getMaxRetries(); attempt++) {
+                try {
+                    fetchAndSaveAllRates(base.trim());
+                    break;
+                } catch (Exception e) {
+                    log.warn("Initial exchange rate load failed for base={} (attempt {}/{}): {}",
+                            base, attempt, config.getMaxRetries(), e.getMessage());
+                }
+            }
+        }
     }
 
     private void cacheInRedisBestEffort(String key, BigDecimal rate) {
