@@ -1,34 +1,22 @@
 package com.garbigo.wallet.client.config;
 
 import feign.RequestInterceptor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import feign.RequestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-/**
- * Feign config for user-facing auth-service endpoints (social, profile, etc.).
- * Forwards the caller's JWT as-is — auth service will validate it normally.
- *
- * Calls that pass an explicit Authorization header (token verification) keep it.
- * Deliberately separate from AuthServiceFeignConfig (API key) so the two
- * credential strategies never mix.
- */
-@Configuration
-public class UserProfileFeignConfig {
+public class UserProfileFeignConfig implements RequestInterceptor {
 
-    @Bean
-    RequestInterceptor jwtForwardingInterceptor() {
-        return template -> {
-            ServletRequestAttributes attrs =
-                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if (attrs != null) {
-                String authHeader = attrs.getRequest().getHeader("Authorization");
-                if (authHeader != null && authHeader.startsWith("Bearer ")
-                        && !template.headers().containsKey("Authorization")) {
-                    template.header("Authorization", authHeader);
-                }
+    @Override
+    public void apply(RequestTemplate template) {
+        ServletRequestAttributes attrs =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attrs != null) {
+            String authHeader = attrs.getRequest().getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")
+                    && !template.headers().containsKey("Authorization")) {
+                template.header("Authorization", authHeader);
             }
-        };
+        }
     }
 }

@@ -73,7 +73,7 @@ public class AuthServiceTokenVerifier {
         } catch (FeignException.Unauthorized | FeignException.Forbidden e) {
             // Revoked token, deactivated account, or similar: auth rejected it
             if (jti != null) cache.remove(jti);
-            log.debug("Auth service rejected token (status {})", e.status());
+            log.warn("Auth service rejected token (status {}): {}", e.status(), e.contentUTF8());
             return Optional.empty();
         } catch (Exception e) {
             log.warn("Could not verify token with auth service: {}", e.getMessage());
