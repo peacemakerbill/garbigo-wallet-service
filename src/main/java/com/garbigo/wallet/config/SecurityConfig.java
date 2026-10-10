@@ -43,7 +43,7 @@ public class SecurityConfig {
 
     /**
      * Fires when an authenticated request hits a role-restricted route it
-     * doesn't have the authority for (e.g. a HOME_OWNER hitting an
+     * doesn't have the authority for (e.g. a CLIENT hitting an
      * ADMIN/OPERATIONS-only endpoint). Without this, Spring Security's
      * default AccessDeniedHandler returns a bare 403 with an empty body —
      * this instead returns the same ApiResponse JSON shape as the rest of
@@ -165,7 +165,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", "X-API-Key"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", "X-Internal-Api-Key", "X-API-Key"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

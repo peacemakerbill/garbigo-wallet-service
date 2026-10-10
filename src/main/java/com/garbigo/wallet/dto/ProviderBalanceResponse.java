@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Premisave's OWN balance held with a payment gateway — not any
+ * Garbigo's OWN balance held with a payment gateway — not any
  * customer's wallet balance. Lets an admin check how much money the
  * platform has sitting with each provider without logging into five
  * separate dashboards.

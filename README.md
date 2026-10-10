@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=6DB33F&height=240&section=header&text=Premisave%20Wallet%20Service&fontSize=52&fontColor=ffffff&fontAlignY=34&desc=Multi-provider%20digital%20wallet%20and%20payment%20orchestration%20microservice&descSize=18&descAlignY=58&animation=fadeIn" alt="Premisave Wallet Service - multi-provider digital wallet and payment orchestration microservice banner" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=6DB33F&height=240&section=header&text=Garbigo%20Wallet%20Service&fontSize=52&fontColor=ffffff&fontAlignY=34&desc=Multi-provider%20digital%20wallet%20and%20payment%20orchestration%20microservice&descSize=18&descAlignY=58&animation=fadeIn" alt="Garbigo Wallet Service - multi-provider digital wallet and payment orchestration microservice banner" />
 </p>
 
-<h1 align="center">Premisave Wallet Service: Multi-Provider Digital Wallet &amp; Payment Orchestration API</h1>
+<h1 align="center">Garbigo Wallet Service: Multi-Provider Digital Wallet &amp; Payment Orchestration API</h1>
 
 <p align="center">
-  <b>A production-minded Spring Boot 4 &amp; MongoDB microservice that unifies M-Pesa, Stripe, PayPal, Flutterwave, and NOWPayments behind a single, USD-denominated wallet API for the Premisave fintech platform.</b>
+  <b>A production-minded Spring Boot 4 &amp; MongoDB microservice that unifies M-Pesa, Stripe, PayPal, Flutterwave, and NOWPayments behind a single, USD-denominated wallet API for the Garbigo fintech platform.</b>
 </p>
 
 <p align="center">
@@ -87,16 +87,16 @@
 
 ## What is this?
 
-**Premisave Wallet Service** is the financial backbone of the Premisave platform: a Java Spring Boot microservice that gives every user one wallet, held in one currency (USD), regardless of which of five independent payment rails actually moved the money.
+**Garbigo Wallet Service** is the financial backbone of the Garbigo platform: a Java Spring Boot microservice that gives every user one wallet, held in one currency (USD), regardless of which of five independent payment rails actually moved the money.
 
-Each payment gateway has its own currency conventions, its own callback shape, its own idea of what "success" means, and its own asynchronous timing. Rather than letting that complexity leak into every other Premisave microservice, this project absorbs it entirely. It:
+Each payment gateway has its own currency conventions, its own callback shape, its own idea of what "success" means, and its own asynchronous timing. Rather than letting that complexity leak into every other Garbigo microservice, this project absorbs it entirely. It:
 
 - exposes one consistent wallet API for deposits, disbursements, transfers, and payments, regardless of which provider is behind a given request,
 - converts every provider's native settlement currency to USD at the moment money enters or leaves the wallet, using a live, cached exchange rate,
 - reconciles every provider's asynchronous webhook or callback against the original transaction by an idempotency reference, so a retried delivery can never double-credit or double-debit a wallet,
 - gives platform admins one place to see how much money moved, how much the platform earned, and which operations still need manual follow-up.
 
-It was built for the Premisave platform's own microservice ecosystem (alongside `auth-service` and `property-service`), but the provider-integration boundary is isolated per service class, so adding a sixth payment rail does not require touching the wallet-crediting logic itself.
+It was built for the Garbigo platform's own microservice ecosystem (alongside `auth-service` and the other Garbigo services), but the provider-integration boundary is isolated per service class, so adding a sixth payment rail does not require touching the wallet-crediting logic itself.
 
 ## Features
 
@@ -105,12 +105,12 @@ It was built for the Premisave platform's own microservice ecosystem (alongside 
 | **Unified USD wallet** | Every balance is held in USD as ground truth, regardless of which currency a provider actually settles in. |
 | **Five payment providers, one API** | M-Pesa (STK Push, C2B, B2C, B2B, B2Pochi, Reversal, Account Balance, Transaction Status, Pull Transactions), Stripe (PaymentIntents, saved cards, Stripe Connect), PayPal (Orders, vaulting, Payouts), Flutterwave v4, NOWPayments crypto. |
 | **Live currency conversion** | Scheduled background refresh from the Frankfurter API, cached in Redis and MongoDB, covering 160+ currency pairs. |
-| **Wallet-to-wallet transfers** | Instant internal transfers between Premisave users, fully commission-tracked. |
+| **Wallet-to-wallet transfers** | Instant internal transfers between Garbigo users, fully commission-tracked. |
 | **Direct payment processing** | Subscription- and booking-fee-style payments where the full amount is recorded as company revenue, not a percentage cut. |
 | **Webhook-driven reconciliation** | Signature-verified callback handling for every provider, with idempotent processing and raw-payload audit logging. |
 | **Admin financial reporting** | Daily reports, all-time system summary, balance overview, and gateway reconciliation, all normalized to USD. |
 | **Automated email notifications** | Deposit, disbursement, transfer, and payment confirmations with resolved sender and recipient names. |
-| **Dual authentication model** | JWT for end users, a shared internal API key for service-to-service calls from the rest of the Premisave ecosystem. |
+| **Dual authentication model** | JWT for end users, a shared internal API key for service-to-service calls from the rest of the Garbigo ecosystem. |
 | **Rate limiting** | Token-bucket request throttling via Bucket4j. |
 | **OpenAPI 3 documentation** | Full API spec generation via springdoc-openapi. |
 
@@ -130,8 +130,8 @@ It was built for the Premisave platform's own microservice ecosystem (alongside 
 ┌──────────────┐      JWT       ┌────────────────────────┐
 │   End User   │ ─────────────► │                        │
 └──────────────┘                │                        │      ┌─────────────┐
-                                 │   Premisave Wallet     │ ───► │  M-Pesa     │
-┌──────────────┐  X-API-Key     │      Service            │ ───► │  Stripe     │
+                                 │   Garbigo Wallet     │ ───► │  M-Pesa     │
+┌──────────────┐  X-Internal-Api-Key     │      Service            │ ───► │  Stripe     │
 │ auth-service │ ◄────────────► │  (this repository)     │ ───► │  PayPal     │
 ├──────────────┤                │                        │ ───► │ Flutterwave │
 │property-serv.│ ◄────────────► │  MongoDB <-> Redis     │ ───► │ NOWPayments │
@@ -144,7 +144,7 @@ It was built for the Premisave platform's own microservice ecosystem (alongside 
 
 - **One wallet-crediting/debiting path, five thin provider integrations.** Every provider's own service class is responsible only for translating that provider's own initiation call and webhook payload into the same shared, currency-converted deposit/disbursement pipeline.
 - **The webhook is the source of truth, never the initiation response.** A provider's initiation call only ever returns a pending reference — the wallet is only credited or the disbursement only finalized once a signed webhook confirms the outcome.
-- **Sibling services never call payment providers directly.** `auth-service` and `property-service` reach payment functionality only through this service's `/internal/**` API, keyed by a shared internal API key.
+- **Sibling services never call payment providers directly.** `auth-service` and the other Garbigo services reach payment functionality only through this service's `/internal/**` API, keyed by a shared internal API key.
 
 ## How deposits work (all providers)
 
@@ -220,7 +220,7 @@ sequenceDiagram
     participant SAF as Safaricom
 
     loop On startup and every N minutes
-        S->>W: GET /internal/accounts (paged, X-API-Key)
+        S->>W: GET /internal/accounts (paged, X-Internal-Api-Key)
         W-->>S: Accounts with M-Pesa numbers
         S->>DB: Upsert accounts, remove stale ones
     end
@@ -252,7 +252,7 @@ sequenceDiagram
 ```bash
 # 1. Clone
 git clone https://github.com/peacemakerbill/premisave-wallet-service.git
-cd premisave-wallet-service
+cd garbigo-wallet-service
 
 # 2. Start MongoDB and Redis (skip if you already have them)
 docker run -d --name wallet-mongo -p 27017:27017 mongo:8
@@ -266,11 +266,11 @@ Create a `.env` file next to `pom.xml`:
 
 ```properties
 # Core
-MONGODB_URI=mongodb://localhost:27017/premisave-wallet
+MONGODB_URI=mongodb://localhost:27017/garbigo-wallet
 REDIS_HOST=localhost
 REDIS_PORT=6379
 JWT_SECRET=<a long, random secret shared with auth-service>
-INTERNAL_API_KEY=<a shared secret, identical across every Premisave microservice>
+INTERNAL_API_KEY=<a shared secret, identical across every Garbigo microservice>
 
 # Auth Service Integration
 AUTH_SERVICE_URL=http://localhost:8080
@@ -306,7 +306,7 @@ Exchange rate refresh complete: 166 refreshed, 0 failed
 mvn clean package
 
 # Run it (environment variables or a .env in the working directory)
-java -jar target/premisave-wallet-service-0.0.1-SNAPSHOT.jar
+java -jar target/garbigo-wallet-service-0.0.1-SNAPSHOT.jar
 ```
 
 **Notes**
@@ -320,10 +320,10 @@ Every setting lives in `src/main/resources/application.yml` and can be overridde
 
 | Environment variable | Default | Required | Description |
 |---|---|---|---|
-| `MONGODB_URI` | `mongodb://localhost:27017/premisave-wallet` | no | MongoDB connection string. |
+| `MONGODB_URI` | `mongodb://localhost:27017/garbigo-wallet` | no | MongoDB connection string. |
 | `REDIS_HOST` / `REDIS_PORT` | `localhost` / `6379` | no | Redis connection for exchange-rate caching and rate limiting. |
-| `JWT_SECRET` | dev default | **yes in production** | Must match every other Premisave service validating the same tokens. |
-| `INTERNAL_API_KEY` | none | **yes** | Shared secret every Premisave microservice presents as `X-API-Key` when calling this service's `/internal/**` endpoints, and this service presents when calling out to `auth-service`. |
+| `JWT_SECRET` | dev default | **yes in production** | Must match every other Garbigo service validating the same tokens. |
+| `INTERNAL_API_KEY` | none | **yes** | Shared secret every Garbigo microservice presents as `X-Internal-Api-Key` when calling this service's `/internal/**` endpoints, and this service presents when calling out to `auth-service`. |
 | `AUTH_SERVICE_URL` | `http://localhost:8080` | no | Base URL of the auth-service used for user detail lookups. |
 | `RATE_LIMIT_REQUESTS_PER_MINUTE` | `60` | no | Token-bucket capacity per client. |
 | `MPESA_CONSUMER_KEY` / `MPESA_CONSUMER_SECRET` | none | **yes** | Daraja app credentials. |
@@ -359,7 +359,7 @@ The service exposes REST endpoints under four broad namespaces:
 | `/payments/**` | JWT + public webhooks | Payment initiation and provider webhook callbacks |
 | `/disbursements/**` | JWT | Withdrawal/payout initiation |
 | `/admin/**` | JWT (Admin/Finance/Operations roles) | Financial reporting, reconciliation, manual adjustments |
-| `/internal/**` | Internal API Key | Service-to-service calls from other Premisave microservices |
+| `/internal/**` | Internal API Key | Service-to-service calls from other Garbigo microservices |
 
 ### `POST /payments/deduct`: deduct from the caller's own wallet
 
@@ -396,7 +396,7 @@ Response (`200`):
 
 | | |
 |---|---|
-| **Header** | `X-API-Key: <INTERNAL_API_KEY>` |
+| **Header** | `X-Internal-Api-Key: <INTERNAL_API_KEY>` |
 
 Request:
 
@@ -433,7 +433,7 @@ Request:
 
 | | |
 |---|---|
-| **Header** | `X-API-Key: <INTERNAL_API_KEY>` |
+| **Header** | `X-Internal-Api-Key: <INTERNAL_API_KEY>` |
 | **Query** | `page` (default `0`), `size` (default `20`) |
 
 Returns, per account: `userId`, `accountNumber`, `fullName`, `frozen`, `mpesaPhoneNumber`, `pochiPhoneNumber`, `paypalEmail`, `paypalConnectedEmail`, `stripeConnected`, `stripePayoutsEnabled`, `flutterwavePaymentMethodNetwork`, `flutterwavePaymentMethodPhone`, `createdAt`. Consumed by the sibling C2B Hakikisha service to keep its own M-Pesa/Pochi lookup table in sync.
@@ -452,12 +452,12 @@ curl -s -X POST "$BASE/payments/deduct" \
 
 # Internal, service-to-service payment (no JWT)
 curl -s -X POST "$BASE/internal/payment" \
-  -H "X-API-Key: $INTERNAL_API_KEY" \
+  -H "X-Internal-Api-Key: $INTERNAL_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"userId":"<user id>","amount":5.00,"service":"AD_SUBSCRIPTION","initiatedBy":"PROPERTY_SERVICE","reference":"ad-sub-test-2"}'
 
 # List saved accounts (consumed by C2B Hakikisha)
-curl -s -H "X-API-Key: $INTERNAL_API_KEY" "$BASE/internal/accounts?page=0&size=20"
+curl -s -H "X-Internal-Api-Key: $INTERNAL_API_KEY" "$BASE/internal/accounts?page=0&size=20"
 ```
 
 **Collection variables worth saving in Postman:** `base_url_wallet`, `internal_api_key`, `jwt_token`, `test_user_id`, `test_recipient_email`.
@@ -494,14 +494,14 @@ The `Wallet` document (one per user) carries the fields most integration partner
 
 1. **Expose the service over HTTPS.** Every provider's webhook/callback URL must be a real, publicly reachable HTTPS endpoint.
 2. **Register each provider's webhook destination** against this service's `/payments/**` callback paths (see [Architecture](#architecture)).
-3. **Set strong secrets** for `JWT_SECRET` and `INTERNAL_API_KEY`, identical across every Premisave service that needs them, kept outside git.
+3. **Set strong secrets** for `JWT_SECRET` and `INTERNAL_API_KEY`, identical across every Garbigo service that needs them, kept outside git.
 4. **Confirm every provider's sandbox flow end-to-end** before flipping to production credentials — a deposit, a disbursement, and their respective webhook deliveries.
 5. **Restrict `/admin/**` and `/internal/**`** at the network layer where possible, in addition to their existing role/API-key checks.
 
 ## Security notes
 
 - **JWT authentication** for all end-user-facing endpoints, validated against the platform's shared secret.
-- **Internal API key authentication** (`X-API-Key`) for service-to-service calls, kept entirely separate from user JWTs so the two trust boundaries never mix.
+- **Internal API key authentication** (`X-Internal-Api-Key`) for service-to-service calls, kept entirely separate from user JWTs so the two trust boundaries never mix.
 - **Webhook signature verification** on every payment provider callback — HMAC-SHA256 (Flutterwave), HMAC-SHA512 (NOWPayments), PayPal's Verify Webhook Signature API, and Safaricom's IP-allowlisted ResultURL model — before any transaction is trusted.
 - **Role-based access control** on admin/finance endpoints (`ADMIN`, `FINANCE`, `OPERATIONS`).
 - **Rate limiting** via a token-bucket algorithm to guard against abuse.
@@ -510,8 +510,8 @@ The `Wallet` document (one per user) carries the fields most integration partner
 ## Project structure
 
 ```
-premisave-wallet-service/
-├── src/main/java/com/premisave/wallet/
+garbigo-wallet-service/
+├── src/main/java/com/garbigo/wallet/
 │   ├── config/          # Security, Redis, Mongo, Feign, Rate Limiting
 │   ├── client/           # Feign clients for auth-service integration
 │   ├── controller/       # REST controllers
@@ -519,7 +519,7 @@ premisave-wallet-service/
 │   ├── dto/              # Request/response DTOs
 │   ├── security/         # JWT & internal API key filters
 │   ├── filter/           # Servlet filters (callback request logging, etc.)
-│   └── PremisaveWalletApplication.java
+│   └── GarbigoWalletApplication.java
 ├── src/main/resources/
 │   └── application.yml
 └── pom.xml
@@ -565,7 +565,7 @@ Real, currently-known gaps and follow-ups, not commitments:
 
 ## Contributing
 
-This is a proprietary service for the Premisave platform. If you have been granted access to contribute:
+This is a proprietary service for the Garbigo platform. If you have been granted access to contribute:
 
 1. Fork the repository and create a branch: `git checkout -b feature/my-improvement`
 2. Make your change and keep the code style consistent.
@@ -601,7 +601,7 @@ Found a bug or have a payment-integration question? [Open an issue](https://gith
 ### Star history
 
 <a href="https://star-history.com/#peacemakerbill/premisave-wallet-service&Date">
-  <img src="https://api.star-history.com/svg?repos=peacemakerbill/premisave-wallet-service&type=Date" alt="Star history chart for premisave-wallet-service" width="600" />
+  <img src="https://api.star-history.com/svg?repos=peacemakerbill/premisave-wallet-service&type=Date" alt="Star history chart for garbigo-wallet-service" width="600" />
 </a>
 
 ---
@@ -609,7 +609,7 @@ Found a bug or have a payment-integration question? [Open an issue](https://gith
 <details>
 <summary>Search keywords</summary>
 
-Spring Boot microservice · Java fintech backend · digital wallet API Java · multi-currency wallet system · payment gateway orchestration · payment reconciliation system · wallet-as-a-service · M-Pesa Daraja API integration Java · Safaricom Daraja Spring Boot · M-Pesa STK Push Java · M-Pesa B2C API · M-Pesa B2Pochi · M-Pesa Hakikisha · mobile money API Kenya · Stripe Java integration · Stripe Connect payouts · PayPal API Java · PayPal Payouts API · Flutterwave API v4 Java · NOWPayments crypto payments API · cryptocurrency payment gateway Java · MongoDB Spring Boot microservice · Redis rate limiting Bucket4j · JWT authentication Spring Security 7 · microservice architecture Java · webhook signature verification · idempotent payment processing · fintech backend Kenya · East Africa payments infrastructure · Premisave · financial ledger accounting system · commission tracking system · admin financial reporting Spring Boot
+Spring Boot microservice · Java fintech backend · digital wallet API Java · multi-currency wallet system · payment gateway orchestration · payment reconciliation system · wallet-as-a-service · M-Pesa Daraja API integration Java · Safaricom Daraja Spring Boot · M-Pesa STK Push Java · M-Pesa B2C API · M-Pesa B2Pochi · M-Pesa Hakikisha · mobile money API Kenya · Stripe Java integration · Stripe Connect payouts · PayPal API Java · PayPal Payouts API · Flutterwave API v4 Java · NOWPayments crypto payments API · cryptocurrency payment gateway Java · MongoDB Spring Boot microservice · Redis rate limiting Bucket4j · JWT authentication Spring Security 7 · microservice architecture Java · webhook signature verification · idempotent payment processing · fintech backend Kenya · East Africa payments infrastructure · Garbigo · financial ledger accounting system · commission tracking system · admin financial reporting Spring Boot
 
 </details>
 

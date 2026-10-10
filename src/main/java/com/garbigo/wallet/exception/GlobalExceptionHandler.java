@@ -295,6 +295,35 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Invalid webhook signature"));
     }
 
+    /**
+     * Errors from calls the wallet proxies to the auth service (social, profile).
+     * Relays auth's own status and its { "message": ... } text instead of a generic 500.
+     */
+    @ExceptionHandler(feign.FeignException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFeign(feign.FeignException ex, HttpServletRequest request) {
+        int status = ex.status();
+        if (status < 400 || status > 599) {
+            log.error("Upstream call failed at {}: {}", request.getRequestURI(), ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(ApiResponse.error("The auth service is currently unavailable"));
+        }
+        String body = ex.contentUTF8();
+        String message = null;
+        if (body != null && !body.isBlank()) {
+            java.util.regex.Matcher m = java.util.regex.Pattern
+                    .compile("\"message\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"").matcher(body);
+            message = m.find() ? m.group(1).replace("\\\"", "\"") : (body.trim().startsWith("{") ? null : body.trim());
+        }
+        if (message == null || message.isBlank()) {
+            message = status == 401 ? "Authentication required"
+                    : status == 403 ? "You do not have permission to access this resource."
+                    : status == 404 ? "Not found" : "Request to the auth service failed";
+        }
+        // A 5xx from auth is a bad gateway from the caller's point of view
+        int out = status >= 500 ? 502 : status;
+        return ResponseEntity.status(out).body(ApiResponse.error(message));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneric(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception at {}: {}", request.getRequestURI(), ex.getMessage(), ex);

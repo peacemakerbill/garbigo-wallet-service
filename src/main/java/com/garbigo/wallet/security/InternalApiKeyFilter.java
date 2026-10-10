@@ -14,21 +14,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 
 /**
  * Authenticates internal, service-to-service requests under /internal/**
- * using a shared API key (X-API-Key header) instead of a tenant/owner JWT.
- * This is how other Premisave services (e.g. property-service, see
- * WalletServiceFeignConfig) call wallet-service without a user's own token.
+ * using the shared API key instead of a user JWT. This is how other Garbigo
+ * services call wallet-service without a user's own token.
  *
- * Only runs for /internal/** — every other route continues to require a
- * normal JWT via JwtAuthenticationFilter.
+ * The header is X-Internal-Api-Key, the same one the Garbigo auth service uses
+ * (its own InternalApiKeyFilter). The legacy X-API-Key header is still accepted
+ * so existing callers keep working.
+ *
+ * Only runs for /internal/**; every other route needs a normal JWT via
+ * JwtAuthenticationFilter.
  */
 @Component
 public class InternalApiKeyFilter extends OncePerRequestFilter {
 
-    private static final String API_KEY_HEADER = "X-API-Key";
+    private static final String API_KEY_HEADER = "X-Internal-Api-Key";
+    private static final String LEGACY_API_KEY_HEADER = "X-API-Key";
 
     @Value("${internal.api-key:}")
     private String expectedApiKey;
@@ -41,14 +47,19 @@ public class InternalApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                      @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String providedKey = request.getHeader(API_KEY_HEADER);
-
         if (expectedApiKey == null || expectedApiKey.isBlank()) {
             throw new AuthenticationServiceException(
-                    "internal.api-key is not configured on wallet-service — refusing all /internal/** calls");
+                    "internal.api-key is not configured on wallet-service, refusing all /internal/** calls");
         }
 
-        if (providedKey != null && providedKey.equals(expectedApiKey)) {
+        String providedKey = request.getHeader(API_KEY_HEADER);
+        if (providedKey == null) {
+            providedKey = request.getHeader(LEGACY_API_KEY_HEADER);
+        }
+
+        if (providedKey != null && MessageDigest.isEqual(
+                providedKey.getBytes(StandardCharsets.UTF_8),
+                expectedApiKey.getBytes(StandardCharsets.UTF_8))) {
             var authentication = new UsernamePasswordAuthenticationToken(
                     "internal-service", null, List.of(new SimpleGrantedAuthority("ROLE_INTERNAL_SERVICE")));
             SecurityContextHolder.getContext().setAuthentication(authentication);

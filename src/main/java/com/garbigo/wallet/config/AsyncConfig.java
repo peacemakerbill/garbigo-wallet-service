@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
  * SMTP round-trip latency to the HTTP response for the action that
  * triggered it (clicking Transfer, Disburse, etc.).
  *
- * Does NOT declare @EnableAsync here — PremisaveWalletApplication
+ * Does NOT declare @EnableAsync here — the main application class
  * already has it at the application level, confirmed directly from that
  * file. Declaring it again here would be redundant (two @EnableAsync
  * annotations active across two different classes) rather than

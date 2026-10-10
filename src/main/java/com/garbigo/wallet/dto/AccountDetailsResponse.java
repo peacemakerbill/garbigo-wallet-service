@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 /**
  * One row of GET /internal/accounts — the wallet-owner directory another
- * Premisave service (e.g. property-service) can look up by, resolving
+ * Garbigo service (for example another Garbigo microservice) can look up by, resolving
  * name/phone/payment-method details without needing a separate call to
  * auth-service for everything except the name itself.
  *

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 /**
  * Body for POST /internal/transfer — a transfer triggered by another
- * Premisave service (e.g. property-service), not a logged-in user.
+ * Garbigo service (for example another Garbigo microservice), not a logged-in user.
  *
  * Requires senderUserId explicitly, unlike the user-facing TransferRequest
  * — InternalApiKeyFilter authenticates the CALLING SERVICE, not an end

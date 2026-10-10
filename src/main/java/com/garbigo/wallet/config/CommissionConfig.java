@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * whole amount IS company revenue with no rate involved at all.
  *
  * TWO deliberately separate rates, not one — internal wallet-to-wallet
- * transfers (money never leaves Premisave) and gateway-bound
+ * transfers (money never leaves Garbigo) and gateway-bound
  * disbursements (M-Pesa B2C, PayPal, Stripe, Flutterwave, NOWPayments,
  * B2Pochi — money leaves the platform to an external provider) are
  * expected to carry meaningfully different rates, gateway higher than

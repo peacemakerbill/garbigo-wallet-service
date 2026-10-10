@@ -36,24 +36,28 @@ server:
 auth:
   service:
     url: ${AUTH_SERVICE_URL:http://localhost:8080}
+    # How long a verified JWT is trusted before wallet-service asks the auth
+    # service again (GET /users/profile). This is also the delay before a
+    # logout or role change on auth takes effect here. 0 = check every request.
+    token-cache-seconds: ${AUTH_TOKEN_CACHE_SECONDS:60}
     # api-key removed from here entirely — AuthServiceFeignConfig (or
     # whichever class calls auth-service) must now read internal.api-key
     # directly instead of auth.service.api-key. One shared key across every
     # microservice, with no separate property path aliasing it.
 
-# Shared secret internal services present via X-API-Key when calling
+# Shared secret internal services present via X-Internal-Api-Key when calling
 # wallet-service's /internal/** endpoints (see InternalApiKeyFilter), AND
 # also used by wallet-service itself when it calls OUT to auth-service —
 # ONE key, reused everywhere, read directly from here rather than through
 # a separate auth.service.api-key alias.
-# Must match property-service's app.api-key (INTERNAL_API_KEY env var) --
+# Must match the auth service's INTERNAL_API_KEY --
 # every service reads the same INTERNAL_API_KEY name, but from its own
 # separate .env file, so the actual value must be copied identically to
 # all of them.
 internal:
   api-key: ${INTERNAL_API_KEY}
 
-# JWT Configuration (must match other services)
+# JWT Configuration: MUST be the exact same base64 value as the auth service's jwt.secret
 jwt:
   secret: ${JWT_SECRET:eW91ci12ZXJ5LXNlY3VyZS1qd3Qtc2VjcmV0LWtleS0zMi1ieXRlcyE=}
 

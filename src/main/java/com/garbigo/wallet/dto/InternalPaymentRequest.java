@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 /**
  * Body for POST /internal/payment — a payment triggered by another
- * Premisave service (e.g. property-service deducting a booking fee or
+ * Garbigo service (for example another Garbigo service deducting a booking fee or
  * ad-subscription charge on a user's behalf), not a logged-in user.
  *
  * Mirrors InternalTransferRequest exactly, same reasoning: requires

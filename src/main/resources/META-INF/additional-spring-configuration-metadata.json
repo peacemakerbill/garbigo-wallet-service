@@ -7,19 +7,25 @@
 			"defaultValue": "http://localhost:8080"
 		},
 		{
+			"name": "auth.service.token-cache-seconds",
+			"type": "java.lang.Long",
+			"description": "Seconds a verified JWT is trusted before wallet-service re-checks it with the auth service (GET /users/profile). Also the delay before a logout or role change on the auth service takes effect here. 0 checks on every request.",
+			"defaultValue": 60
+		},
+		{
 			"name": "auth.service.api-key",
 			"type": "java.lang.String",
-			"description": "Shared secret injected as X-API-Key on internal service-to-service calls (e.g. C2B email validation). Must match AUTH_SERVICE_API_KEY on the auth service. Never used for user-facing Feign calls — those forward the caller's Bearer JWT instead."
+			"description": "Deprecated and unused: the shared INTERNAL_API_KEY (internal.api-key) is sent as X-Internal-Api-Key on calls to the auth service."
 		},
 		{
 			"name": "internal.api-key",
 			"type": "java.lang.String",
-			"description": "Shared secret internal services present via X-API-Key when calling wallet-service's /internal/** endpoints (see InternalApiKeyFilter). Must match property-service's app.api-key (INTERNAL_API_KEY env var) — both services read the same INTERNAL_API_KEY name, but from their own separate .env files."
+			"description": "Shared secret presented as X-Internal-Api-Key, both by other services calling wallet-service's /internal/** endpoints (see InternalApiKeyFilter; legacy X-API-Key still accepted) and by wallet-service when it calls the auth service's internal endpoints. Must equal the auth service's INTERNAL_API_KEY."
 		},
 		{
 			"name": "jwt.secret",
 			"type": "java.lang.String",
-			"description": "Base64-encoded secret key used to sign and verify JWT tokens. Must match across all services."
+			"description": "Base64-encoded secret used to verify JWTs issued by the auth service. Must be exactly the same value as the auth service's jwt.secret (the decoded bytes are used as the HMAC key with no padding or truncation)."
 		},
 		{
 			"name": "rate-limit.requests-per-minute",
@@ -203,7 +209,7 @@
 			"name": "mpesa.daraja.express-checkout.partner-name",
 			"type": "java.lang.String",
 			"description": "Partner/organization name displayed to the merchant in the USSD PIN prompt during B2B Express Checkout.",
-			"defaultValue": "Premisave"
+			"defaultValue": "Garbigo"
 		},
 		{
 			"name": "mpesa.daraja.express-checkout.callback-url",
@@ -735,8 +741,8 @@
 					"description": "Root logger level."
 				},
 				{
-					"value": "com.premisave",
-					"description": "All Premisave application classes."
+					"value": "com.garbigo",
+					"description": "All Garbigo application classes."
 				},
 				{
 					"value": "org.springframework.data.mongodb",

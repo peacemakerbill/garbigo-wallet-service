@@ -1,12 +1,12 @@
 package com.garbigo.wallet.enums;
 
 /**
- * Must stay in sync with com.premisave.auth.enums.Role in the auth service.
- * Used to deserialize the role field returned by the auth service via Feign.
+ * Must stay in sync with com.garbigo.auth.enums.Role in the auth service.
+ * Used to read the role field returned by the auth service (profile / internal endpoints).
  */
 public enum Role {
     CLIENT,
-    HOME_OWNER,
+    COLLECTOR,
     ADMIN,
     OPERATIONS,
     FINANCE,

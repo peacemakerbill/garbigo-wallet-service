@@ -20,7 +20,7 @@ public class SystemController {
 
     private final MongoTemplate mongoTemplate;
 
-    @Value("${spring.application.name:premisave-wallet-service}")
+    @Value("${spring.application.name:garbigo-wallet-service}")
     private String serviceName;
 
     @Value("${server.port:8084}")

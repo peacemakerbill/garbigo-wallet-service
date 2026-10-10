@@ -7,24 +7,33 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
+/**
+ * Authenticates requests carrying an auth-service JWT.
+ *
+ * 1. Verifies the signature and expiry locally (JwtService, shared JWT_SECRET).
+ * 2. Confirms the token with the auth service (AuthServiceTokenVerifier) to pick up
+ *    the user's role and to honour logout, since the token itself has no role claim.
+ *
+ * Controllers keep working as before: auth.getName() is the user's email and
+ * request attribute "userId" is the userId claim.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final AuthServiceTokenVerifier tokenVerifier;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService, AuthServiceTokenVerifier tokenVerifier) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
+        this.tokenVerifier = tokenVerifier;
     }
 
     @Override
@@ -42,24 +51,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = authHeader.substring(7);
 
         try {
-            String userEmail = jwtService.extractUsername(jwt);
-            String role      = jwtService.extractRole(jwt);
-            String userId    = jwtService.extractUserId(jwt);
+            if (SecurityContextHolder.getContext().getAuthentication() == null && jwtService.isTokenValid(jwt)) {
+                String email = jwtService.extractUsername(jwt);
+                String jti = jwtService.extractJti(jwt);
+                String userIdClaim = jwtService.extractUserId(jwt);
+                long expiry = jwtService.extractExpiration(jwt).getTime();
 
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+                Optional<VerifiedUser> verified = tokenVerifier.verify(jwt, jti, expiry);
 
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    // Build authorities from the JWT role claim directly
-                    List<SimpleGrantedAuthority> authorities = role != null
-                            ? List.of(new SimpleGrantedAuthority(role))
+                if (email != null && verified.isPresent() && verified.get().active()) {
+                    VerifiedUser user = verified.get();
+
+                    List<SimpleGrantedAuthority> authorities = user.role() != null
+                            ? List.of(new SimpleGrantedAuthority("ROLE_" + user.role().name()))
                             : List.of();
 
                     UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                            new UsernamePasswordAuthenticationToken(email, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // Stash userId in request so controllers can use it without parsing JWT again
+                    // Stash userId so controllers do not need to parse the JWT again
+                    String userId = userIdClaim != null ? userIdClaim : user.id();
                     if (userId != null) {
                         request.setAttribute("userId", userId);
                     }
@@ -68,8 +80,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Invalid/expired token — let the request continue unauthenticated;
-            // Spring Security will reject it at the authorization layer
+            // Invalid/expired token: continue unauthenticated; Spring Security
+            // rejects it at the authorization layer
             logger.warn("JWT processing failed: " + e.getMessage());
         }
 

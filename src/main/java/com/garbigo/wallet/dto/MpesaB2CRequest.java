@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 public class MpesaB2CRequest {
     private String phoneNumber;
     private BigDecimal amount;
-    private String remarks = "Premisave Wallet Disbursement";
+    private String remarks = "Garbigo Wallet Disbursement";
 }

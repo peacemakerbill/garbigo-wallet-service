@@ -114,7 +114,7 @@ public class Disbursement {
      * Wallet.accountNumber (the owner's email) as the lookup key. Null if
      * that lookup failed, or the account genuinely has no name on file.
      * Distinct from verifiedRecipientName below, which is the EXTERNAL
-     * receiving organization's name for a B2B payment (not a Premisave
+     * receiving organization's name for a B2B payment (not a Garbigo
      * user at all) — this field is always about the wallet owner
      * initiating the withdrawal.
      */

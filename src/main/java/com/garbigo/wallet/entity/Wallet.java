@@ -126,7 +126,7 @@ public class Wallet {
      * Stripe Connect Express account id (acct_xxx) linked for international
      * bank withdrawals — distinct from stripeCustomerId above, which is for
      * charging the user (deposits). This account is created and
-     * operationally controlled by Premisave (see StripeService.
+     * operationally controlled by Garbigo (see StripeService.
      * createConnectedAccountAndOnboardingLink) — Stripe collects the user's
      * KYC/bank details directly via hosted onboarding, never touching our
      * servers, same principle as card data via Stripe.js.

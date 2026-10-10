@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * create with no separate lifecycle record of the payment itself.
  *
  * Distinct from Transfer: only ONE wallet is touched — funds leave the
- * system entirely (to Premisave itself) rather than moving to another
+ * system entirely (to Garbigo itself) rather than moving to another
  * user's wallet, so there's no sender/recipient pair, just a single payer.
  *
  * Same PENDING-before-mutation behavior change as Transfer — see

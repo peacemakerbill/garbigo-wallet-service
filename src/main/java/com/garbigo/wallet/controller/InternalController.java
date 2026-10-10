@@ -44,8 +44,7 @@ public class InternalController {
     private final WalletService walletService;
 
     /**
-     * The wallet-owner directory another garbigo service (e.g.
-     * property-service) can page through — name, phone numbers
+     * The wallet-owner directory another Garbigo service can page through — name, phone numbers
      * (M-Pesa/Pochi), PayPal email, and payment-method linkage status
      * for every account, without each caller needing its own separate
      * lookups against auth-service for everything except the name.
@@ -95,7 +94,7 @@ public class InternalController {
 
     /**
      * Triggers a wallet-to-platform payment on behalf of another
-     * garbigo service — e.g. property-service deducting a booking fee
+     * garbigo service — e.g. another Garbigo service deducting a booking fee
      * or ad-subscription charge from a user's wallet. Same underlying
      * logic as POST /payments/deduct — see PaymentService.executePayment
      * — just with an explicit payer instead of one resolved from a JWT.

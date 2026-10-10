@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Admin-only visibility into Premisave's OWN balance held with each
+ * Admin-only visibility into Garbigo's OWN balance held with each
  * integrated payment gateway (M-Pesa, Stripe, PayPal, Flutterwave,
  * NOWPayments) — not any customer's wallet, the platform's own account
  * with each provider. Lets an admin check all five without logging into

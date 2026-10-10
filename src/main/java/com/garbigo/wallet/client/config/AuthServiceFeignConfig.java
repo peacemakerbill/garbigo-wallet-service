@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Feign configuration for the Auth Service client.
- * Injects the X-API-Key header on every outbound request so the
- * auth service's ApiKeyFilter accepts the call.
+ * Injects the X-Internal-Api-Key header on every outbound request so the
+ * auth service's InternalApiKeyFilter accepts the call.
  *
  * Reads internal.api-key directly — previously read a separate
  * auth.service.api-key property (backed by its own AUTH_SERVICE_API_KEY
@@ -36,7 +36,7 @@ public class AuthServiceFeignConfig {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate template) {
-                template.header("X-API-Key", apiKey);
+                template.header("X-Internal-Api-Key", apiKey);
             }
         };
     }
