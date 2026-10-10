@@ -37,22 +37,22 @@ public interface UserProfileClient {
 
     /** Public summary of a user (UserSummaryDto). */
     @GetMapping("/social/profile/{userId}")
-    Map<String, Object> getPublicProfile(@PathVariable("userId") String userId);
+    Map<String, Object> getPublicProfile(@PathVariable String userId);
 
-    /** ADMIN only on the auth side (403 otherwise). Filters are all optional. */
+    /** ADMIN only on the auth side (403 otherwise). Filters are all optional: a null value is simply left out of the query string. */
     @GetMapping("/users")
-    List<Map<String, Object>> searchUsers(@RequestParam(name = "search", required = false) String search,
-                                          @RequestParam(name = "role", required = false) String role,
-                                          @RequestParam(name = "verified", required = false) Boolean verified,
-                                          @RequestParam(name = "active", required = false) Boolean active,
-                                          @RequestParam(name = "archived", required = false) Boolean archived);
+    List<Map<String, Object>> searchUsers(@RequestParam String search,
+                                          @RequestParam String role,
+                                          @RequestParam Boolean verified,
+                                          @RequestParam Boolean active,
+                                          @RequestParam Boolean archived);
 
     /** Any signed-in user may search collectors. */
     @GetMapping("/users/collectors")
-    List<Map<String, Object>> searchCollectors(@RequestParam(name = "search", required = false) String search,
-                                               @RequestParam(name = "verified", required = false) Boolean verified,
-                                               @RequestParam(name = "active", required = false) Boolean active,
-                                               @RequestParam(name = "archived", required = false) Boolean archived);
+    List<Map<String, Object>> searchCollectors(@RequestParam String search,
+                                               @RequestParam Boolean verified,
+                                               @RequestParam Boolean active,
+                                               @RequestParam Boolean archived);
 
     // ── Social: Like ─────────────────────────────────────────────────────────
 
@@ -66,31 +66,31 @@ public interface UserProfileClient {
 
     /** Response: { "liked": true } */
     @GetMapping("/social/is-liked")
-    Map<String, Object> isLiked(@RequestParam("targetId") String targetId,
-                                @RequestParam(name = "targetType", defaultValue = "USER") String targetType);
+    Map<String, Object> isLiked(@RequestParam String targetId,
+                                @RequestParam String targetType);
 
     /** Who liked the target (UserSummaryDto list). */
     @GetMapping("/social/likes/{targetId}")
-    List<Map<String, Object>> getLikers(@PathVariable("targetId") String targetId,
-                                        @RequestParam(name = "targetType", defaultValue = "USER") String targetType);
+    List<Map<String, Object>> getLikers(@PathVariable String targetId,
+                                        @RequestParam String targetType);
 
     // ── Social: Follow ───────────────────────────────────────────────────────
 
     @PostMapping("/social/follow/{userId}")
-    String follow(@PathVariable("userId") String userId);
+    String follow(@PathVariable String userId);
 
     @DeleteMapping("/social/follow/{userId}")
-    String unfollow(@PathVariable("userId") String userId);
+    String unfollow(@PathVariable String userId);
 
     /** Response: { "following": true } */
     @GetMapping("/social/is-following/{userId}")
-    Map<String, Object> isFollowing(@PathVariable("userId") String userId);
+    Map<String, Object> isFollowing(@PathVariable String userId);
 
     @GetMapping("/social/followers/{userId}")
-    List<Map<String, Object>> getFollowers(@PathVariable("userId") String userId);
+    List<Map<String, Object>> getFollowers(@PathVariable String userId);
 
     @GetMapping("/social/following/{userId}")
-    List<Map<String, Object>> getFollowing(@PathVariable("userId") String userId);
+    List<Map<String, Object>> getFollowing(@PathVariable String userId);
 
     // ── Social: Review ───────────────────────────────────────────────────────
 
@@ -100,30 +100,30 @@ public interface UserProfileClient {
 
     /** Body: { "rating", "comment" }. Returns plain text. */
     @PutMapping("/social/review/{reviewId}")
-    String editReview(@PathVariable("reviewId") String reviewId, @RequestBody Map<String, Object> request);
+    String editReview(@PathVariable String reviewId, @RequestBody Map<String, Object> request);
 
     @DeleteMapping("/social/review/{reviewId}")
-    String deleteReview(@PathVariable("reviewId") String reviewId);
+    String deleteReview(@PathVariable String reviewId);
 
     /** ReviewResponseDto list. */
     @GetMapping("/social/reviews/{targetId}")
-    List<Map<String, Object>> getReviews(@PathVariable("targetId") String targetId,
-                                         @RequestParam(name = "targetType", defaultValue = "USER") String targetType);
+    List<Map<String, Object>> getReviews(@PathVariable String targetId,
+                                         @RequestParam String targetType);
 
     /** Who reviewed the target (UserSummaryDto list). */
     @GetMapping("/social/reviewers/{targetId}")
-    List<Map<String, Object>> getReviewers(@PathVariable("targetId") String targetId,
-                                           @RequestParam(name = "targetType", defaultValue = "USER") String targetType);
+    List<Map<String, Object>> getReviewers(@PathVariable String targetId,
+                                           @RequestParam String targetType);
 
     /** SocialStatsDto: followersCount, followingCount, likesCount, averageRating. */
     @GetMapping("/social/stats/{userId}")
-    Map<String, Object> getUserStats(@PathVariable("userId") String userId);
+    Map<String, Object> getUserStats(@PathVariable String userId);
 
     // ── Profile views ────────────────────────────────────────────────────────
 
     /** Returns plain text. */
     @PostMapping("/profile-views/{viewedUserId}")
-    String recordProfileView(@PathVariable("viewedUserId") String viewedUserId);
+    String recordProfileView(@PathVariable String viewedUserId);
 
     @GetMapping("/profile-views/who-viewed-me")
     List<Map<String, Object>> getWhoViewedMe();
@@ -136,5 +136,5 @@ public interface UserProfileClient {
     Map<String, Object> getMyViewStats();
 
     @GetMapping("/profile-views/stats/{userId}")
-    Map<String, Object> getUserViewStats(@PathVariable("userId") String userId);
+    Map<String, Object> getUserViewStats(@PathVariable String userId);
 }
