@@ -27,9 +27,8 @@ import java.util.Map;
  * via UserProfileClient (UserProfileFeignConfig). Auth owns the business rules
  * and its validation messages are relayed by GlobalExceptionHandler.
  *
- * The auth service has no "users I liked" or "reviews I wrote" endpoints, so
- * those lists are not offered here (GET /users/me/likes and /users/me/written-reviews
- * answer 404).
+ * The auth service has no "reviews I wrote" endpoint, so that list is not offered
+ * here (GET /users/me/written-reviews answers 404).
  */
 @Slf4j
 @RestController
@@ -130,6 +129,13 @@ public class UserProfileController {
     public ResponseEntity<ApiResponse<Void>> unlikeUser(@PathVariable String userId) {
         String result = userProfileClient.unlike(targetBody(userId));
         return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    /** GET /users/me/likes: users I have liked */
+    @GetMapping("/me/likes")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getMyLikes() {
+        return ResponseEntity.ok(ApiResponse.success("Liked users retrieved",
+                userProfileClient.getMyLikes()));
     }
 
     // ── Follow ───────────────────────────────────────────────────────────────

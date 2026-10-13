@@ -74,6 +74,10 @@ public interface UserProfileClient {
     List<Map<String, Object>> getLikers(@PathVariable String targetId,
                                         @RequestParam String targetType);
 
+    /** Users the caller has liked (UserSummaryDto list; empty list when none). */
+    @GetMapping("/social/liked-users")
+    List<Map<String, Object>> getMyLikes();
+
     // ── Social: Follow ───────────────────────────────────────────────────────
 
     @PostMapping("/social/follow/{userId}")
