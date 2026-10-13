@@ -120,8 +120,8 @@ public class FxRateService {
         } catch (Exception liveFailure) {
             CachedRate cached = lastKnownGood.get(pairKey);
             if (cached != null && Duration.between(cached.fetchedAt(), Instant.now()).compareTo(FALLBACK_TTL) <= 0) {
-                log.warn("Frankfurter live fetch failed for {} — using last-known-good rate {} from {} ago. Cause: {}",
-                        pairKey, cached.rate(), Duration.between(cached.fetchedAt(), Instant.now()), liveFailure.getMessage());
+                log.warn("Could not reach Frankfurter for {}, so the last known rate {} (fetched {} ago) is being used instead. Reason: {}",
+                        pairKey, cached.rate(), Duration.between(cached.fetchedAt(), Instant.now()).toMinutes() + " min", liveFailure.getMessage());
                 return cached.rate();
             }
             throw liveFailure instanceof IllegalStateException ise ? ise
@@ -192,13 +192,13 @@ public class FxRateService {
                 JsonNode rateNode = entry.path("rate");
                 if (quoteNode.isMissingNode() || !quoteNode.isString()
                         || rateNode.isMissingNode() || !rateNode.isNumber()) {
-                    log.warn("Skipping malformed entry in Frankfurter bulk response for base={}: {}", base, entry);
+                    log.warn("Ignored a rate for {} because Frankfurter sent it in an unexpected format: {}", base, entry);
                     continue;
                 }
                 rates.put(quoteNode.asString(), rateNode.decimalValue());
             }
 
-            log.info("Frankfurter bulk rates fetched for base={}: {} currencies", base, rates.size());
+            log.debug("Frankfurter returned {} currency rates for {}", rates.size(), base);
             return rates;
         } catch (IOException e) {
             throw new IllegalStateException("Failed to reach Frankfurter FX service for base=" + base, e);
@@ -229,7 +229,7 @@ public class FxRateService {
             }
 
             BigDecimal rate = rateNode.decimalValue();
-            log.debug("Frankfurter live rate fetched: {} -> {} = {}", base, quote, rate);
+            log.trace("Frankfurter live rate fetched: {} -> {} = {}", base, quote, rate);
             return rate;
         } catch (IOException e) {
             throw new IllegalStateException(

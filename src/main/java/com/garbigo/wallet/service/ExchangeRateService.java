@@ -14,8 +14,10 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
 /**
@@ -93,7 +95,7 @@ public class ExchangeRateService {
                 return cached instanceof BigDecimal bd ? bd : new BigDecimal(cached.toString());
             }
         } catch (Exception redisFailure) {
-            log.warn("Redis read failed for exchange rate {}->{} — falling back to MongoDB directly. Cause: {}",
+            log.warn("The rate cache (Redis) could not be read for {} to {}, so the saved rate is being read from the database instead. Reason: {}",
                     base, quote, redisFailure.getMessage());
         }
 
@@ -103,7 +105,7 @@ public class ExchangeRateService {
             return saved.get().getRate();
         }
 
-        log.info("No saved rate for {}->{} yet — fetching live once and saving for future use", base, quote);
+        log.info("First request for {} to {}: no saved rate yet, so it is being fetched live from Frankfurter and saved for next time", base, quote);
         BigDecimal rate = fxRateService.getRate(base, quote);
         saveOrUpdateRates(List.of(new ExchangeRateEntry(base, quote, rate)));
         return rate;
@@ -133,7 +135,7 @@ public class ExchangeRateService {
 
             cacheInRedisBestEffort(cacheKey(base, quote), entry.getRate());
         }
-        log.debug("Saved/updated {} exchange rate(s)", entries.size());
+        log.trace("Saved/updated {} exchange rate(s)", entries.size());
     }
 
     public List<ExchangeRate> getAllRates() {
@@ -162,7 +164,7 @@ public class ExchangeRateService {
         for (Map.Entry<String, BigDecimal> entry : rates.entrySet()) {
             String quote = entry.getKey().toUpperCase();
             if (!CURRENCY_CODE_PATTERN.matcher(quote).matches()) {
-                log.warn("Skipping unexpected quote currency '{}' from Frankfurter bulk response for base={}",
+                log.warn("Ignored '{}' in the Frankfurter rates for {} because it is not a valid 3-letter currency code",
                         entry.getKey(), validatedBase);
                 continue;
             }
@@ -170,7 +172,10 @@ public class ExchangeRateService {
         }
 
         saveOrUpdateRates(entries);
-        log.info("Fetched and saved {} rate(s) from Frankfurter for base={}", entries.size(), validatedBase);
+        Map<String, BigDecimal> saved = new LinkedHashMap<>();
+        entries.forEach(e -> saved.put(e.getQuoteCurrency(), e.getRate()));
+        log.info("Downloaded and saved {} currency rates for {} from Frankfurter. Each value is how much of that currency 1 {} buys: {}",
+                entries.size(), currencyLabel(validatedBase), validatedBase, formatRates(saved));
         return entries;
     }
 
@@ -190,16 +195,20 @@ public class ExchangeRateService {
             seedInitialRates();
             existingPairs = exchangeRateRepository.findAll();
             if (existingPairs.isEmpty()) {
-                log.info("Exchange rate refresh skipped — no pairs saved and the initial load did not succeed; will retry next cycle");
+                log.info("No currency rates are saved yet and the first download from Frankfurter did not work. Will try again in {} minutes",
+                        refreshMinutes());
                 return;
             }
-            log.info("Initial exchange rate load complete: {} pair(s) saved", existingPairs.size());
+            log.info("First start on this database: {} currency rates were downloaded and saved. They will be kept up to date every {} minutes",
+                    existingPairs.size(), refreshMinutes());
             return;
         }
 
         long startedAt = System.currentTimeMillis();
-        log.debug("Starting scheduled exchange rate refresh for {} previously-used pair(s)", existingPairs.size());
-        int refreshed = 0, failed = 0;
+        // base -> (quote -> rate) for pairs that refreshed, and base -> quotes that did not;
+        // reported together in one line per base once the whole pass is done
+        Map<String, Map<String, BigDecimal>> refreshedByBase = new LinkedHashMap<>();
+        Map<String, List<String>> failedByBase = new LinkedHashMap<>();
 
         for (ExchangeRate pair : existingPairs) {
             String base = pair.getBaseCurrency();
@@ -210,25 +219,53 @@ public class ExchangeRateService {
                 try {
                     BigDecimal rate = fxRateService.getRate(base, quote);
                     saveOrUpdateRates(List.of(new ExchangeRateEntry(base, quote, rate)));
+                    refreshedByBase.computeIfAbsent(base, b -> new LinkedHashMap<>()).put(quote, rate);
                     success = true;
                     break;
                 } catch (Exception e) {
-                    log.warn("Exchange rate refresh failed for {}->{} (attempt {}/{}): {}",
+                    log.warn("Could not update the {} to {} rate (try {} of {}). Reason: {}",
                             base, quote, attempt, config.getMaxRetries(), e.getMessage());
                 }
             }
 
-            if (success) {
-                refreshed++;
-            } else {
-                failed++;
-                log.error("Exchange rate refresh permanently failed for {}->{} after {} attempts — " +
-                        "keeping the last saved rate (if any) in both MongoDB and Redis", base, quote, config.getMaxRetries());
+            if (!success) {
+                failedByBase.computeIfAbsent(base, b -> new ArrayList<>()).add(quote);
             }
         }
 
-        log.info("Exchange rate refresh complete: {} pair(s) refreshed, {} failed, took {} ms",
-                refreshed, failed, System.currentTimeMillis() - startedAt);
+        long tookMs = System.currentTimeMillis() - startedAt;
+        refreshedByBase.forEach((base, rates) ->
+                log.info("Currency rates updated: {} rates for {} refreshed in {}. Each value is how much of that currency 1 {} buys: {}",
+                        rates.size(), currencyLabel(base), formatDuration(tookMs), base, formatRates(rates)));
+        failedByBase.forEach((base, quotes) ->
+                log.error("Could not update {} {} rate(s) ({}) after {} tries each. The last saved rates are still being used. Next attempt in {} minutes",
+                        quotes.size(), currencyLabel(base), String.join(", ", quotes), config.getMaxRetries(), refreshMinutes()));
+    }
+
+    /** "US Dollar (USD)" for a known code, or just the code when Java does not know it. */
+    private static String currencyLabel(String code) {
+        try {
+            return java.util.Currency.getInstance(code).getDisplayName(java.util.Locale.ENGLISH) + " (" + code + ")";
+        } catch (IllegalArgumentException unknownCode) {
+            return code;
+        }
+    }
+
+    /** 62180 ms becomes "1 min 2 s"; under a minute stays in seconds. */
+    private static String formatDuration(long ms) {
+        long totalSeconds = Math.round(ms / 1000.0);
+        return totalSeconds < 60 ? totalSeconds + " s" : (totalSeconds / 60) + " min " + (totalSeconds % 60) + " s";
+    }
+
+    private long refreshMinutes() {
+        return Math.max(1, config.getRefreshIntervalMs() / 60_000);
+    }
+
+    /** Compact "AED=3.6725 AFN=64.94 ..." view of one base's rates, for a single log line. */
+    private static String formatRates(Map<String, BigDecimal> rates) {
+        return rates.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue().stripTrailingZeros().toPlainString())
+                .collect(Collectors.joining(" "));
     }
 
     /**
@@ -250,7 +287,7 @@ public class ExchangeRateService {
                     fetchAndSaveAllRates(base.trim());
                     break;
                 } catch (Exception e) {
-                    log.warn("Initial exchange rate load failed for base={} (attempt {}/{}): {}",
+                    log.warn("Could not download the starting rates for {} (try {} of {}). Reason: {}",
                             base, attempt, config.getMaxRetries(), e.getMessage());
                 }
             }
@@ -261,7 +298,7 @@ public class ExchangeRateService {
         try {
             redisTemplate.opsForValue().set(key, rate, CACHE_TTL);
         } catch (Exception redisFailure) {
-            log.warn("Redis write failed for exchange rate cache key={} — MongoDB save still succeeded. Cause: {}",
+            log.warn("The rate was saved in the database, but could not be stored in the rate cache (Redis) under '{}'. Reason: {}",
                     key, redisFailure.getMessage());
         }
     }
