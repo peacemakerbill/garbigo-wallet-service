@@ -296,6 +296,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * A URL that does not exist in this service (a typo, or an endpoint that was removed).
+     * Without this it fell through to the catch-all and came back as a 500 with an error
+     * stack trace in the log; it is the caller's mistake, so answer 404 and log one short line.
+     */
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResource(
+            org.springframework.web.servlet.resource.NoResourceFoundException ex, HttpServletRequest request) {
+        log.warn("No such endpoint: {} {}", request.getMethod(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("No such endpoint: " + request.getMethod() + " " + request.getRequestURI()));
+    }
+
+    /**
      * Errors from calls the wallet proxies to the auth service (social, profile).
      * Relays auth's own status and its { "message": ... } text instead of a generic 500.
      */

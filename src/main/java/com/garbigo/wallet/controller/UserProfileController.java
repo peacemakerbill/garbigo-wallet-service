@@ -28,7 +28,8 @@ import java.util.Map;
  * and its validation messages are relayed by GlobalExceptionHandler.
  *
  * The auth service has no "users I liked" or "reviews I wrote" endpoints, so
- * those lists are not offered here.
+ * those lists are not offered here (GET /users/me/likes and /users/me/written-reviews
+ * answer 404).
  */
 @Slf4j
 @RestController
@@ -250,6 +251,26 @@ public class UserProfileController {
     @GetMapping("/{targetId}/follow-status")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getFollowStatus(@PathVariable String targetId) {
         return ResponseEntity.ok(ApiResponse.success("Follow status", userProfileClient.isFollowing(targetId)));
+    }
+
+    /**
+     * GET /users/{targetId}/review-status -> { "reviewed": true, "reviewId": "..." }
+     * Auth has no such endpoint, so this reads the target's reviews and looks for one
+     * written by the caller.
+     */
+    @GetMapping("/{targetId}/review-status")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getReviewStatus(
+            @PathVariable String targetId, HttpServletRequest request) {
+        String myId = currentUserId(request);
+        Map<String, Object> mine = userProfileClient.getReviews(targetId, DEFAULT_TARGET_TYPE).stream()
+                .filter(r -> myId.equals(String.valueOf(r.get("reviewerId"))))
+                .findFirst()
+                .orElse(null);
+
+        Map<String, Object> status = new HashMap<>();
+        status.put("reviewed", mine != null);
+        status.put("reviewId", mine != null ? mine.get("id") : null);
+        return ResponseEntity.ok(ApiResponse.success("Review status", status));
     }
 
     /**
